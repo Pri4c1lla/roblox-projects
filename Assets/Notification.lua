@@ -5,7 +5,7 @@ local TweenService = cloneref(game:GetService("TweenService"));
 local RunService = cloneref(game:GetService("RunService"));
 local TextService = cloneref(game:GetService("TextService"));
 
-local Player = cloneref(lp.LocalPlayer);
+local Player = lp.LocalPlayer
 
 local function randomStr()
     local str = ""
