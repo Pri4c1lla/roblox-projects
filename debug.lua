@@ -712,7 +712,7 @@ L_38_.Debugs:AddButton({
 			print("Error: " .. failed)
 			L_125_:NewNotification({
 				["Mode"] = "Error",
-				["Title"] = "failed to run Hydroxide",
+				["Title"] = "failed to run",
 				["Description"] = failed,
 				["Timeout"] = 15,
 				["Audio"] = false
