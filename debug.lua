@@ -145,7 +145,7 @@ local L_37_ =
     L_2_:CreateWindow(
     {
 	Title = "Debuggers",
-	SubTitle = "Fixed And Rewrite By pri4c1lla",
+	SubTitle = "Fixed By pri4c1lla",
 	TabWidth = 160,
 	Size = UDim2.fromOffset(580, 400),
 	Acrylic = true,
