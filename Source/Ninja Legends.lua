@@ -1,3 +1,17 @@
+--[[
+https://raw.githubusercontent.com/Pri4c1lla/Storage/refs/heads/main/Source/Ninja%20Legends.lua
+                                                     
+              ,--.  ,---.       ,--.,--.,--.         
+ ,---. ,--.--.`--' /    | ,---./   ||  ||  | ,--,--. 
+| .-. ||  .--',--./  '  || .--'`|  ||  ||  |' ,-.  | 
+| '-' '|  |   |  |'--|  |\ `--. |  ||  ||  |\ '-'  | 
+|  |-' `--'   `--'   `--' `---' `--'`--'`--' `--`--' 
+`--'                                                 
+
+Script by Thai.
+
+]]
+
 local LoadingTime = getgenv().AuthTime or tick()
 
 local function run(func) func() end
@@ -451,3 +465,1110 @@ task.defer(function()
             end
         end)
     end)
+
+    local buybelts = Tabs.Main:AddToggle("", {Title = "auto buy belts", Description = "", Default = false})
+    buybelts:OnChanged(function(v)
+        Script.Main.belts = v
+        pcall(function()
+            if Script.Main.belts then
+                shared.CreateThered:newThread(.1,function(self)
+                    if not Script.Main.belts then
+                        self:Disable()
+                    end
+                    game:GetService("Players").LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllBelts",GetLastIsland())
+                end)
+            end
+        end)
+    end)
+
+    local buyskills = Tabs.Main:AddToggle("", {Title = "auto buy skills", Description = "", Default = false})
+    buyskills:OnChanged(function(v)
+        Script.Main.skills = v
+        pcall(function()
+            if Script.Main.skills then
+                shared.CreateThered:newThread(.1,function(self)
+                    if not Script.Main.skills then
+                        self:Disable()
+                    end
+                    game:GetService("Players").LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllSkills",GetLastIsland())
+                end)
+            end
+        end)
+    end)
+
+    local buyshurikens = Tabs.Main:AddToggle("", {Title = "auto buy shurikens", Description = "", Default = false})
+    buyshurikens:OnChanged(function(v)
+        Script.Main.shurikens = v
+        pcall(function()
+            if Script.Main.shurikens then
+                shared.CreateThered:newThread(.1,function(self)
+                    if not Script.Main.shurikens then
+                        self:Disable()
+                    end
+                    game:GetService("Players").LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllShurikens",GetLastIsland())
+                end)
+            end
+        end)
+    end)
+
+    local AutoRanks = Tabs.Main:AddToggle("", {Title = "Auto Ranks", Description = "", Default = false})
+    AutoRanks:OnChanged(function(v)    
+        Script.Main.Ranks = v
+        pcall(function()
+            if Script.Main.Ranks then
+                shared.CreateThered:newThread(.25,function(self)
+                    if not Script.Main.Ranks  then
+                        self:Disable()
+                    end
+                    for _, v in next, shared.YuriTables.Table.Ranks do
+                        Players.LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyRank", v)
+                    end
+                end)
+            end
+        end)
+    end)
+
+    Tabs.Main:AddButton({
+        Title = "Get All Element",
+        Description = "update at 10/17/2024",
+        Callback = function()
+            Window:Dialog({
+                Title = "Title",
+                Content = "This is a dialog",
+                Buttons = {
+                    {
+                        Title = "Confirm",
+                        Callback = function()
+                            for _,Elements in next, Element do
+                                ReplicatedStorage:WaitForChild("rEvents"):FindFirstChild("elementMasteryEvent"):FireServer(Elements)
+                            end
+                        end
+                    },
+                    {
+                        Title = "Cancel",
+                        Callback = function()
+                            print("Cancelled the dialog.")
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+    Tabs.Main:AddButton({
+        Title = "Collect All Chests",
+        Description = "",
+        Callback = function()
+            local suc , fail = pcall(function()
+                for _, v in next, shared.YuriTables.Table.Chest do
+                    print(v)
+                    local args = {
+                        [1] = v
+                    }
+                    ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("checkChestRemote"):InvokeServer(unpack(args))
+                end
+            end)
+            if suc then
+                return
+            else
+                NotificationLoad:NewNotification({
+                    ["Mode"] = "error",
+                    ["Title"] = "Failed to open : error below",
+                    ["Description"] = fail,
+                    ["Timeout"] = 15,
+                    ["Audio"] = false
+                })
+            end
+        end
+    })
+
+    local AutoChi = Tabs.Main:AddToggle("", {Title = "Auto Chi", Description = "(save old position) Depend On Ping if Collecting Is Slow.", Default = false})
+    AutoChi:OnChanged(function(v)
+        Script.Main.Chi = v
+        pcall(function()
+            if Script.Main.Chi and getgenv().AllowBackOldPos then
+                oldpos = gethumanoidrootpart().CFrame
+            else
+                gethumanoidrootpart().CFrame = oldpos
+            end
+        end)
+    end)
+
+    local AutoHoops = Tabs.Main:AddToggle("", {Title = "Auto Hoops", Description = "(Depend On Ping) delay is 0.1", Default = false})
+    AutoHoops:OnChanged(function(v)
+        Script.Main.Hoops = v
+        if Script.Main.Hoops then
+            shared.CreateThered:newThread(.1,function(self)
+                if not Script.Main.Hoops then
+                    self:Disable()
+                end
+                for _, v in pairs(workspace.Hoops:GetChildren()) do
+                    if v:IsA("MeshPart") then
+                        if v:FindFirstChild("beingUsed") then return end
+                        task.defer(function()
+                            local oldpostouchPart = v.touchPart.CFrame
+                            v.touchPart.CFrame = gethumanoidrootpart().CFrame
+                            task.wait()
+                            v.touchPart.CFrame = oldpostouchPart
+                        end)
+                    end
+                end
+            end)
+        end
+    end)
+
+    local openshop = Tabs.Main:AddDropdown("", {
+        Title = "Open Shop",
+        Description = "",
+        Values = shared.YuriTables.Table.Shop,
+        Multi = false,
+        Default = 1,
+    })
+    
+    openshop:SetValue("nil")
+    
+    openshop:OnChanged(function(v)
+       Script.Main.typeshop = v
+    end)
+    
+    Tabs.Main:AddButton({
+        Title = "Click To open",
+        Description = "",
+        Callback = function()
+            local suc , fail = pcall(function()
+                for i,v in pairs(workspace.shopAreaCircles:GetChildren()) do
+                    if string.find(v.Name,Script.Main.typeshop) then
+                        FireTouchPart(v.circleInner)
+                    end
+                end
+            end)
+            if suc then
+                return
+            else
+                NotificationLoad:NewNotification({
+                    ["Mode"] = "error",
+                    ["Title"] = "Failed to open : error below",
+                    ["Description"] = fail,
+                    ["Timeout"] = 15,
+                    ["Audio"] = false
+                })
+            end
+        end
+    })
+
+    local SEC = Tabs.Main:AddDropdown("", {
+        Title = "Sell Area",
+        Description = "auto added new selling path to the last update.",
+        Values = shared.YuriTables.Table.SellArea,
+        Multi = false,
+        Default = 1,
+    })
+    
+    SEC:SetValue("nil")
+    
+    SEC:OnChanged(function(v)
+       Script.Main.SellPart = v
+    end)
+
+    local ASM = Tabs.Main:AddDropdown("", {
+        Title = "Auto Sell Method",
+        Values = {"Instant","Full(Max)"},
+        Multi = false,
+        Default = 1,
+    })
+    
+    ASM:SetValue("Instant")
+    
+    ASM:OnChanged(function(v)
+       Script.Main.typeSell = v
+    end)
+    
+    local AdvancedAutoSell = Tabs.Main:AddToggle("", {Title = "Auto Sell", Description = "", Default = false})
+    AdvancedAutoSell:OnChanged(function(v)
+        Script.Main.Sell = v
+        LPH_JIT_MAX(function()
+            pcall(function()
+                if Script.Main.Sell then
+                    shared.CreateThered:newThread(0,function(self)
+                        if not Script.Main.Sell then
+                            self:Disable()
+                        end
+                        if Script.Main.typeSell == "Instant" then
+                            for i,v in pairs(workspace.sellAreaCircles:GetChildren()) do
+                                if string.find(v.Name,Script.Main.SellPart) then
+                                    FireTouchPart(v.circleInner)
+                                    wait()
+                                end
+                            end
+                        elseif Script.Main.typeSell == "Full(max)" then
+                            if PlayerGui.gameGui.maxNinjitsuMenu.Visible == true then
+                                for i,v in pairs(workspace.sellAreaCircles:GetChildren()) do
+                                    if string.find(v.Name,Script.Main.SellPart) then
+                                        FireTouchPart(v.circleInner)
+                                        wait()
+                                    end
+                                end
+                            end
+                        else
+                            return print("kill ur self now!!!")
+                        end
+                    end)
+                end
+            end)
+        end)()
+    end)
+    
+    local autoWheel = Tabs.Main:AddToggle("", {Title = "auto Wheel(24h Cooldown)", Default = false})
+    autoWheel:OnChanged(function(v)
+        Script.Main.Wheel = v
+        LPH_JIT_MAX(function()
+            pcall(function()
+                if Script.Main.Wheel then
+                    shared.CreateThered:newThread(.5,function(self)
+                        if not Script.Main.Wheel then
+                            self:Disable()
+                        end
+                        ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openFortuneWheelRemote"):InvokeServer("openFortuneWheel",workspace:WaitForChild("Fortune Wheel"))
+                    end)
+                end
+            end)
+        end)()
+    end)
+
+    local SB = Tabs.Boss:AddDropdown("Dropdown", {
+        Title = "Select Boss",
+        Values = shared.YuriTables.Table.Boss,
+        Multi = false,
+        Default = 1,
+    })
+
+    SB:SetValue(nil)
+
+    SB:OnChanged(function(v)
+        Script.Boss.SelectBoss = v
+    end)
+
+    Tabs.Boss:AddButton({
+        Title = "Update Boss",
+        Description = "reset dropdown",
+        Callback = function()
+            SB:Clear()
+            wait(.1)
+            for i,v in pairs(workspace.bossFolder:GetChildren()) do
+                SB:Add(v.Name)
+            end
+        end
+    })
+
+    local KillBoss = Tabs.Boss:AddToggle("", {Title = "Auto Kill Boss", Default = false })
+    KillBoss:OnChanged(function(v)
+        Script.Boss.KillBoss = v
+        pcall(function()
+            if Script.Boss.KillBoss and getgenv().AllowBackOldPos then
+                oldpos = gethumanoidrootpart().CFrame
+                getgenv().needatk = true
+            elseif Script.Boss.KillBoss and not getgenv().AllowBackOldPos then
+                getgenv().needatk = true
+            elseif not Script.Boss.KillBoss then
+                gethumanoidrootpart().CFrame = oldpos
+                getgenv().needatk = false
+            end
+        end)
+    end)
+    
+    local InstantBoss = Tabs.Boss:AddToggle("", {Title = "Instant Kill Boss", Description = "get close to boss, it will work.", Default = false })
+    InstantBoss:OnChanged(function(v)
+        Script.Boss.InstantBoss = v
+    end)
+    
+    local InstantAllBoss = Tabs.Boss:AddToggle("", {Title = "Kill All Boss", Description = "get close to boss, it will work.", Default = false })
+    InstantAllBoss:OnChanged(function(v)
+        Script.Boss.InstantAllBoss = v
+    end)
+    
+    local SelectPlr = Tabs.Players:AddDropdown("SelectedPlyer", {
+        Title = "Players",
+        Values = shared.YuriTables.Table.Players,
+        Multi = false,
+        Default = 1,
+    })
+    
+    SelectPlr:SetValue("nil")
+    
+    SelectPlr:OnChanged(function(Value)
+        Script.Players.SelectPlayers = Value
+    end)
+    
+    Tabs.Players:AddButton({
+        Title = "Refresh Dropdown",
+        Description = "Update Players",
+        Callback = function()
+            SelectPlr:Clear()
+            wait(.1)
+            for _,v in next, Players:GetPlayers() do
+                SelectPlr:Add(v.Name)
+            end
+        end
+    })
+    
+    local SpectatePly = Tabs.Players:AddToggle("ToggleQuanSat", {
+        Title = "Spectate Player",
+        Default = false
+    })
+    SpectatePly:OnChanged(function(Value)
+        Script.Players.IsSpectator = Value
+    end)
+    
+    local Teleport2Lp = Tabs.Players:AddToggle("ToggleTeleport", {
+        Title = "Teleport to Players",
+        Default = false
+    })
+    
+    Teleport2Lp:OnChanged(function(Value)
+        Script.Players.TeleportPlayers = Value
+    end)
+    
+    Options.ToggleTeleport:SetValue(false)
+    
+    local Jumped = Tabs.Players:AddSlider("", {
+        Title = "Jumppower",
+        Description = "",
+        Default = 100,
+        Min = 50,
+        Max = 1000,
+        Rounding = 10,
+        Callback = function(Value)
+            Script.Players.JumpValue = Value / 2
+        end
+    })
+    
+    Jumped:SetValue(30)
+    
+    Jumped:OnChanged(function(Value)
+        Script.Players.JumpValue = Value
+    end)
+    
+    local Setloop222 = Tabs.Players:AddToggle("L_542_", {Title = "Jumppower", Description = "", Default = false})
+    Setloop222:OnChanged(function(Value)
+        Script.Players.JumpToggle = Value
+    end)
+
+    local infJumpes = Tabs.Players:AddToggle("", {Title = "inf Jump", Description = "", Default = false})
+    infJumpes:OnChanged(function(v)
+        getgenv().faGStOFQ6W = v
+        if getgenv().faGStOFQ6W then
+            if infJump then infJump:Disconnect() end
+            infJumpDebounce = false
+            infJump = UserInputService.JumpRequest:Connect(function()
+                if not infJumpDebounce then
+                    infJumpDebounce = true
+                    getchar():FindFirstChildWhichIsA("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+                    task.wait()
+                    infJumpDebounce = false
+                end
+            end)
+        else
+            if infJump then infJump:Disconnect() end
+            infJumpDebounce = false
+        end
+    end)
+
+    local FlysKeybind = Tabs.Players:AddKeybind("Flying", {
+        Title = "flight",
+        Mode = "Toggle",
+        Description = "Noclip Function Built In",
+        Default = "N",
+        Callback = function(v)
+            Script.Main.flight = v
+            if Script.Main.flight then
+                while Script.Main.flight do task.wait()
+                    local character = getchar()
+                    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        humanoid.PlatformStand = Script.Main.flight
+                    end
+                end
+            else
+                for _,v in pairs(gethumanoidrootpart():GetDescendants()) do
+                    if v:IsA("BodyGyro") or v:IsA("BodyVelocity") then
+                        --v.Parent = nil
+                        task.defer(function()
+                            v.Parent = nil
+                            getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
+                        end)
+                    end
+                end
+            end
+        end,
+    })
+
+    local FlyToggle = Tabs.Players:AddToggle("FlyingMoblie", {Title = "Fly", Description = "Toggle Fly For Mobile Users", Default = false })
+    FlyToggle:OnChanged(function(v)
+        Script.Players.flightmb = v
+        if Script.Players.flightmb then
+            while Script.Players.flightmb do task.wait()
+                local character = getchar()
+                local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.PlatformStand = Script.Players.flightmb
+                end
+            end
+        else
+            for _,v in pairs(gethumanoidrootpart():GetDescendants()) do
+                if v:IsA("BodyGyro") or v:IsA("BodyVelocity") then
+                    --v.Parent = nil
+                    task.defer(function()
+                        v.Parent = nil
+                        getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
+                    end)
+                end
+            end
+        end
+    end)
+
+    local Flight = Tabs.Players:AddSlider("Fly Speed", {
+        Title = "Fly Speed",
+        Description = "Make Your Flying Faster",
+        Default = 2,
+        Min = 3,
+        Max = 150,
+        Rounding = 1,
+        Callback = function(Value)
+            Script.Players.FlySpeed = Value
+        end
+    })
+    
+    Flight:OnChanged(function(Value)
+        Script.Players.FlySpeed = Value
+    end)
+    
+    Flight:SetValue(5)
+
+    local Noclipv = Tabs.Players:AddToggle("L_124_", {Title = "Noclip", Description = "", Default = false})
+    Noclipv:OnChanged(function(v)
+        Script.Players.Noclip = v
+    end)
+    
+    local Platformv = Tabs.Players:AddToggle("L_125_", {Title = "Platform", Description = "bring part to your beneath you causing you to float", Default = false})
+    Platformv:OnChanged(function(v)
+        getgenv().Float = v
+        pcall(function()
+            if getgenv().Float and not float then
+                Floating()
+            else
+                float = false
+            end
+        end)
+    end)
+
+    local SelectIsland = Tabs.Teleports:AddDropdown("Island", {
+        Title = "Select Islands to Teleport",
+        Values = shared.YuriTables.Table.Island,
+        Multi = false,
+        Default = 1,
+    })
+    
+    SelectIsland:SetValue(nil)
+    
+    SelectIsland:OnChanged(function(v)
+        Script.Teleports.SelectIslands = v
+    end)
+    
+    Tabs.Teleports:AddButton({
+        Title = "Click To Teleport",
+        Description = "Teleporting to Select Islands",
+        Callback = function()
+            for i,v in pairs(workspace.islandUnlockParts:GetChildren()) do
+                if v.Name == Script.Teleports.SelectIslands then
+                    gethumanoidrootpart().CFrame = v.CFrame * CFrame.new(0,15,0)
+                end
+            end
+        end
+    })
+    
+    local UnlockIsland = Tabs.Teleports:AddToggle("", {Title = "Auto Unlock Island", Description = "", Default = false})
+    UnlockIsland:OnChanged(function(v)
+        Script.Teleports.UnlockIsland = v
+    end)
+    
+    local SelectKarmaType = Tabs.Teleports:AddDropdown("Karma", {
+        Title = "Select Karma",
+        Values = {"Evil","Light"},
+        Multi = false,
+        Default = 1,
+    })
+    
+    SelectKarmaType:SetValue("Evil")
+    
+    SelectKarmaType:OnChanged(function(v)
+        Script.Teleports.TypeKarma = v
+    end)
+    
+    local trainingArea = Tabs.Teleports:AddDropdown("Area", {
+        Title = "Select Area",
+        Values = {"-+100 Karma","-250 Karma","+1000 Karma","-+2000 Karma","-+5000 Karma"},
+        Multi = false,
+        Default = 1,
+    })
+    
+    trainingArea:SetValue(nil)
+    
+    trainingArea:OnChanged(function(v)
+        Script.Teleports.SelectArea = v
+    end)
+    
+    Tabs.Teleports:AddButton({
+        Title = "Teleport",
+        Description = "",
+        Callback = function()
+            if Script.Teleports.TypeKarma == "Evil" then
+                if Script.Teleports.SelectArea == "-+100 Karma" then
+                    gethumanoidrootpart().CFrame = AreaCFrame[1]
+                elseif Script.Teleports.SelectArea == "-250 Karma" then
+                    gethumanoidrootpart().CFrame = AreaCFrame[3]
+                elseif Script.Teleports.SelectArea == "-+2000 Karma" then
+                    gethumanoidrootpart().CFrame = AreaCFrame[5]
+                elseif Script.Teleports.SelectArea == "-+5000 Karma" then
+                    gethumanoidrootpart().CFrame = AreaCFrame[7]
+                end
+            elseif Script.Teleports.TypeKarma == "Light" then
+                if Script.Teleports.SelectArea == "-+100 Karma" then
+                    gethumanoidrootpart().CFrame = AreaCFrame[2]
+                elseif Script.Teleports.SelectArea == "+1000 Karma" then
+                    gethumanoidrootpart().CFrame = AreaCFrame[4]
+                elseif Script.Teleports.SelectArea == "-+2000 Karma" then
+                    gethumanoidrootpart().CFrame = AreaCFrame[6]
+                elseif Script.Teleports.SelectArea == "-+5000 Karma" then
+                    gethumanoidrootpart().CFrame = AreaCFrame[8]
+                end
+            end
+        end
+    })
+
+    Tabs.Teleports:AddButton({
+        Title = "Teleport Dojo",
+        Description = "Teleporting to Infinty Stats Dojo",
+        Callback = function()
+            gethumanoidrootpart().CFrame = workspace.areaTeleportParts.valleyToInfinityStatsDojo.CFrame
+        end
+    })
+
+    Tabs.Teleports:AddButton({
+        Title = "Teleport Altar",
+        Description = "Teleporting to altar Of Elements",
+        Callback = function()
+            gethumanoidrootpart().CFrame = workspace.areaTeleportParts.valleyToAltarOfElements.CFrame
+        end
+    })
+
+    Tabs.Teleports:AddButton({
+        Title = "Teleport Cloneing Altar",
+        Description = "Teleporting to Pet Cloning Altar",
+        Callback = function()
+            gethumanoidrootpart().CFrame = workspace.areaTeleportParts.valleyToCloningAltar.CFrame
+        end
+    })
+
+    local TeleportEgg = Tabs.Eggs:AddDropdown("Eggss", {
+        Title = "Select To Teleport",
+        Values = shared.YuriTables.Table.Crystal,
+        Multi = false,
+        Default = 1,
+    })
+    
+    TeleportEgg:SetValue(nil)
+    
+    TeleportEgg:OnChanged(function(v)
+        Script.Eggs.SelectTeleport = v
+    end)
+    
+    Tabs.Eggs:AddButton({
+        Title = "Teleport to Crystals / Eggs",
+        Description = "",
+        Callback = function()
+            gethumanoidrootpart().CFrame = workspace.mapCrystalsFolder[Script.Eggs.SelectTeleport]:GetModelCFrame() * CFrame.new(0,5,0)
+        end
+    })
+    
+    local Eggs = Tabs.Eggs:AddDropdown("Eggs", {
+        Title = "Select Egg",
+        Values = shared.YuriTables.Table.Crystal,
+        Multi = false,
+        Default = 1,
+    })
+    
+    Eggs:SetValue(nil)
+    
+    Eggs:OnChanged(function(v)
+        Script.Eggs.SelectOpenEggs = v
+    end)
+    
+    local openegged = Tabs.Eggs:AddToggle("", {Title = "Open Eggs / Crystal", Description = "",Default = false })
+    openegged:OnChanged(function(v)
+        Script.Eggs.open = v
+    end)
+
+    local abop = Tabs.Misc:AddToggle("", {Title = "Allow Return Old Position", Description = "work with all function that mention to save old position.", Default = true })
+    abop:OnChanged(function(v)
+        getgenv().AllowBackOldPos = v
+    end)
+
+    Tabs.Misc:AddButton({
+        Title = "Toggle Popups",
+        Description = "",
+        Callback = function()
+            PlayerGui.statEffectsGui.Enabled = not PlayerGui.statEffectsGui.Enabled
+            PlayerGui.hoopGui.Enabled = not PlayerGui.hoopGui.Enabled
+        end
+    })
+
+    local Fastshurikens = Tabs.Misc:AddToggle("", {Title = "Fast Shurikens", Default = false })
+    Fastshurikens:OnChanged(function(v)
+        Script.Misc.Fastshurikens = v
+    end)
+
+    local RenderRadius = Tabs.Misc:AddSlider("Range", {
+        Title = "RenderRadius",
+        Description = "Range",
+        Default = 200,
+        Min = 50,
+        Max = 800,
+        Rounding = 50,
+        Callback = function(Value)
+            Script.Misc.RangeRadius = Value / 2
+        end
+    })
+    
+    RenderRadius:OnChanged(function(Value)
+        Script.Misc.RangeRadius = Value / 2
+    end)
+    
+    RenderRadius:SetValue(200)
+
+    local KillAura = Tabs.Misc:AddToggle("", {Title = "Kill Aura", Description = "Using Shurikens to Kill Players. Recommended use with Fast Shurikens" ,Default = false })
+    KillAura:OnChanged(function(v)
+        Script.Misc.KillAura = v
+    end)
+
+    local FastSwing = Tabs.Misc:AddToggle("", {Title = "Fast Swing", Default = false })
+    FastSwing:OnChanged(function(v)
+        Script.Misc.FastSwing = v
+    end)
+
+    Tabs.Misc:AddButton({
+        Title = "get max jump",
+        Description = "",
+        Callback = function()
+            lp.multiJumpCount.Value = 50
+        end
+    })
+
+    Tabs.Misc:AddButton({
+        Title = "JumpPad",
+        Description = "",
+        Callback = function()
+            for _,v in pairs(workspace.jumpPads:GetChildren()) do
+                if v.Name == "JumpPad" then
+                    FireTouchPart(v.touchPart)
+                end
+            end
+        end
+    })
+
+    run(function()
+        NotificationLoad:NewNotification({
+            ["Mode"] = "Info",
+            ["Title"] = "all tabs is loaded, please wait.",
+            ["Description"] = "",
+            ["Timeout"] = 5,
+            ["Audio"] = false
+        })
+    end)
+
+    local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+    local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+    
+    SaveManager:SetLibrary(Fluent)
+    InterfaceManager:SetLibrary(Fluent)
+    SaveManager:IgnoreThemeSettings()
+    SaveManager:SetIgnoreIndexes({'TextboxIdentifier'})
+    InterfaceManager:SetFolder("Pri4cillT1x/Configs")
+    SaveManager:SetFolder("Pri4cillT1x/Configs")
+    local Settings = Window:AddTab({
+        Title = "Settings",
+        Icon = "settings"
+    })
+    InterfaceManager:BuildInterfaceSection(Settings)
+    SaveManager:BuildConfigSection(Settings)
+    Window:SelectTab(1)
+    SaveManager:LoadAutoloadConfig()
+
+end)
+
+LPH_JIT_MAX(function()
+
+    RunService.Heartbeat:Connect(function()
+
+        pcall(function()
+
+            if Script.Main.swing or getgenv().needatk then
+                if lp.Character then
+                    local Humanoid = lp.Character.Humanoid
+                    local get_sword = GetSword()
+                    if get_sword ~= nil then
+                        if get_sword.Parent == lp.Character then
+                            task.spawn(function()
+                                get_sword:Activate()
+                                get_sword:Deactivate()
+                                lp:WaitForChild("ninjaEvent"):FireServer("swingKatana")
+                            end)
+                        elseif get_sword.Parent == lp.Backpack then
+                            Humanoid:EquipTool(get_sword)
+                        end
+                    end
+                end
+            end
+
+            if Script.Main.Chi then
+                for i,v in pairs(workspace.spawnedCoins.Valley:GetChildren()) do
+                    --if string.match(v.Name, "Chi") then
+                    if v.Name == "Chi" or v.Name == "Blue Chi Crate" or v.Name == "Chi Crate" then
+                        if v:FindFirstChild("collected") then return end
+                        gethumanoidrootpart().CFrame = CFrame.new(v.Position)
+                    end
+                end
+            end
+
+                --[[
+                    for i,v in pairs(workspace:GetChildren()) do
+                        if string.find(v.Name,"Chest") and not string.match(v.Name,"groupChest") then
+                            if not v.circleSignPart.signGui.timeLabel.text == "Ready To Collect" then return end
+                            FireTouchPart(v.circleInner)
+                        end
+                    end
+                ]]
+
+            if Script.Boss.KillBoss then
+                for i,v in pairs(workspace.bossFolder:GetChildren()) do
+                    if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid") and v:FindFirstChildOfClass("Humanoid").Health > 0 then
+                        gethumanoidrootpart().CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0,5,7)
+                    end
+                end
+            end
+
+            if Script.Main.flight or Script.Main.flightmb then
+                local character = getchar()
+                local primaryPart = character and character.PrimaryPart
+                if primaryPart then
+                    local bodyVelocity, bodyGyro = unpack(movers)
+                    if not bodyVelocity then
+                        bodyVelocity = Instance.new("BodyVelocity")
+                        bodyVelocity.MaxForce = Vector3.one * 9e9
+            
+                        bodyGyro = Instance.new("BodyGyro")
+                        bodyGyro.MaxTorque = Vector3.one * 9e9
+                        bodyGyro.P = 9e4
+            
+                        local bodyAngularVelocity = Instance.new("BodyAngularVelocity")
+                        bodyAngularVelocity.AngularVelocity = Vector3.yAxis * 9e9
+                        bodyAngularVelocity.MaxTorque = Vector3.yAxis * 9e9
+                        bodyAngularVelocity.P = 9e9
+            
+                        movers = { bodyVelocity, bodyGyro, bodyAngularVelocity }
+                    end
+            
+                    if Script.Main.flight or Script.Main.flightmb then
+                        local camCFrame = Camera.CFrame
+                        local velocity = Vector3.zero
+                        local rotation = camCFrame.Rotation
+            
+                        if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                            velocity += camCFrame.LookVector
+                            rotation *= CFrame.Angles(math.rad(-40), 0, 0)
+                        end
+                        if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                            velocity -= camCFrame.LookVector
+                            rotation *= CFrame.Angles(math.rad(40), 0, 0)
+                        end
+                        if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                            velocity += camCFrame.RightVector
+                            rotation *= CFrame.Angles(0, 0, math.rad(-40))
+                        end
+                        if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                            velocity -= camCFrame.RightVector
+                            rotation *= CFrame.Angles(0, 0, math.rad(40))
+                        end
+                        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                            velocity += Vector3.yAxis
+                        end
+                        if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+                            velocity -= Vector3.yAxis
+                        end
+            
+                        local tweenInfo = TweenInfo.new(0.5)
+                        TweenService:Create(bodyVelocity, tweenInfo, { Velocity = velocity * Script.Players.FlySpeed * 45 }):Play()
+                        bodyVelocity.Parent = primaryPart
+            
+                        if not fling then
+                            TweenService:Create(bodyGyro, tweenInfo, { CFrame = camCFrame.Rotation }):Play()
+                            bodyGyro.Parent = primaryPart
+                        end
+                    end
+                end
+            end
+
+            if Script.Boss.InstantBoss then
+                if sethidden then
+                    for i,v in pairs(workspace.bossFolder:GetChildren()) do
+                        if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") then
+                            v.Humanoid:ChangeState(15)
+                            v.Humanoid.Health = die
+                            v.Humanoid.Health = 0
+                            sethidden(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                        end
+                    end
+                else
+                    for i,v in pairs(workspace.bossFolder:GetChildren()) do
+                        if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") then
+                            v.Humanoid:ChangeState(15)
+                            v.Humanoid.Health = die
+                            v.Humanoid.Health = 0
+                        end
+                    end
+                end
+            end
+
+            if Script.Boss.InstantAllBoss then
+                if sethidden then
+                    for _,v in pairs(workspace.bossFolder:GetChildren()) do
+                        if v:isA("Model") and v:FindFirstChild("HumanoidRootPart") then
+                            v.Humanoid:ChangeState(15)
+                            v.Humanoid.Health = die
+                            v.Humanoid.Health = 0
+                            sethidden(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                        end
+                    end
+                else
+                    for _,v in pairs(workspace.bossFolder:GetChildren()) do
+                        if v:isA("Model") and v:FindFirstChild("HumanoidRootPart") then
+                            v.Humanoid:ChangeState(15)
+                            v.Humanoid.Health = die
+                            v.Humanoid.Health = 0
+                        end
+                    end
+                end
+            end
+
+            if Script.Teleports.UnlockIsland then
+                local number = random_number(1, 21)
+                local maxed = shared.YuriTables.Table.Island[number]
+                for i,v in pairs(workspace.islandUnlockParts[maxed]:GetChildren()) do
+                    if v.Name == "TouchInterest" and v.Parent then
+                        FireTouchPart(v.Parent)
+                    end
+                end
+            end
+
+            if Script.Eggs.open then
+                local args = {
+                    [1] = "openCrystal",
+                    [2] = Script.Eggs.SelectOpenEggs
+                }
+                ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openCrystalRemote"):InvokeServer(unpack(args))
+            end
+
+            if Script.Players.JumpToggle then
+                lp.Character:FindFirstChildOfClass('Humanoid').JumpPower = Script.Players.JumpValue
+            else
+                if not Script.Players.JumpToggle then
+                    lp.Character:FindFirstChildOfClass('Humanoid').JumpPower = 50
+                end
+            end
+    
+            if Script.Misc.Fastshurikens then
+                for _, v in pairs(workspace.shurikensFolder:GetChildren()) do
+					if v.Name == "Handle" then
+						if v:FindFirstChild("BodyVelocity") then
+							local bv = v:FindFirstChildOfClass("BodyVelocity")
+							bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+							bv.Velocity = getMouse.Hit.lookVector * 1000
+						end
+					end
+				end
+            end
+
+            if Script.Misc.FastSwing then
+                local get_sword = GetSword()
+                if get_sword ~= nil then
+                    get_sword["attackTime"].Value = .1
+                end
+            else
+                local get_sword = GetSword()
+                get_sword["attackTime"].Value = .4
+            end
+
+            if Script.Misc.KillAura then
+                for _,v in next, Players:GetPlayers() do
+                    if v.Name ~= game.Players.LocalPlayer.Name then
+                        local magI = (v.Character.HumanoidRootPart.Position - lp.Character.HumanoidRootPart.Position).magnitude
+                        if magI < Script.Misc.RangeRadius and not v.Character:FindFirstChild("inSafezone") and not getchar():FindFirstChild("inSafezone") then
+                            for i,v in pairs(lp:FindFirstChildOfClass("Backpack"):GetChildren()) do
+                                if string.match(v.Name,"Shuriken") then
+                                    v.Parent = lp.Character
+                                end
+                            end
+                            local args = {
+                                [1] = "attackShuriken",
+                                [2] = v.Character.HumanoidRootPart.Position
+                            }
+                            lp:WaitForChild("ninjaEvent"):FireServer(unpack(args))
+                        end
+                    end
+                end
+            end
+    
+            if Script.Players.Noclip or Script.Main.flight or Script.Main.flightmb then
+                local character = getchar()
+                if character then
+                    for _, part in pairs(character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            if noclipDefaults[part] == nil then
+                                task.wait()
+                                noclipDefaults[part] = part.CanCollide
+                            else
+                                if not Script.Players.Noclip or not Script.Players.flight or not Script.Players.flightmb then
+                                    part.CanCollide = false
+                                else
+                                    part.CanCollide = noclipDefaults[part]
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+
+            if Script.Players.IsSpectator then
+                repeat wait(.1)
+                    Camera.CameraSubject = Players:FindFirstChild(Script.Players.SelectPlayers).Character:FindFirstChildOfClass("Humanoid")
+                until not Players:FindFirstChild(Script.Players.SelectPlayers) or not Script.Players.IsSpectator
+                task.defer(function()
+                    Camera.CameraSubject = lp.Character:FindFirstChildOfClass("Humanoid")
+                end)
+                --Camera.CameraSubject = lp.Character:FindFirstChildOfClass("Humanoid")
+            end
+    
+            if Script.Players.TeleportPlayers then
+                repeat wait(.1)
+                    gethumanoidrootpart().CFrame = Players:FindFirstChild(Script.Players.SelectPlayers).Character.HumanoidRootPart.CFrame * CFrame.new(0,0,5)
+                until not Players:FindFirstChild(Script.Players.SelectPlayers) or Script.Players.TeleportPlayers == false or not Script.Players.TeleportPlayers
+            end
+
+        end)
+
+    end)
+
+end)()
+
+LPH_JIT(function()
+	run(function()
+		RunService.Stepped:Connect(function()
+			pcall(function()
+				if Script.Main.Chi or Script.Boss.KillBoss
+				then
+                    if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        if not Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
+                            if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
+                                game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
+                            end
+                            local BodyVelocity = Instance.new("BodyVelocity")
+                            BodyVelocity.Name = shared.Yurikusa.Main.Velocity
+                            BodyVelocity.Parent =  Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                            BodyVelocity.MaxForce = Vector3.new(9e9,9e9,9e9);
+                            BodyVelocity.Velocity = Vector3.new(0,0,0);
+                        end
+                    end
+                else
+					if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
+						game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity):Destroy();
+					end
+				end
+			end)
+		end)
+	end)
+end)()
+
+LPH_NO_VIRTUALIZE(function()
+	run(function()
+        if setfflag then
+            setfflag("HumanoidParallelRemoveNoPhysics", "False")
+            setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
+        end
+    end)
+end)()
+
+LPH_NO_VIRTUALIZE(function()
+	run(function()
+		RunService.Heartbeat:Connect(function()
+
+            pcall(function()
+
+                if setscriptable then
+                    setscriptable(game.Players.LocalPlayer, "SimulationRadius", true)
+                end
+
+                if sethidden then
+                    sethidden(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+                end
+
+            end)
+
+		end)
+	end)
+end)()
+
+-- for config~
+LPH_NO_VIRTUALIZE(function()
+    run(function()
+        pcall(function()
+
+            NotificationLoad:NewNotification({
+                ["Mode"] = "info",
+                ["Title"] = "Started Anti AFK",
+                ["Description"] = "Thank for using my script. <3",
+                ["Timeout"] = 6,
+                ["Audio"] = false
+            })
+            
+
+            local getconnect = getconnections or get_signal_cons
+
+            if getconnect then
+                for i,v in pairs(getconnect(lp.Idled)) do
+                    if v["Disable"] then
+                        v["Disable"](v)
+                    elseif v["Disconnect"] then
+                        v["Disconnect"](v)
+                    end
+                end
+            else
+                lp.Idled:Connect(function()
+                    VirtualUser:CaptureController()
+                    VirtualUser:Button2Down(Vector2.new(0,0),Camera.CFrame)
+                    wait(1)
+                    VirtualUser:Button2Up(Vector2.new(0,0),Camera.CFrame)
+                end)
+            end
+
+        end)
+    end)
+end)()
+
+print("Load Script Success in "..string.format("%.2f",tick() - LoadingTime).." secs")
+
+NotificationLoad:NewNotification({
+    ["Mode"] = "Success",
+    ["Title"] = string.format("%.2f",tick() - LoadingTime).." secs",
+    ["Description"] = "Done, took load in.",
+    ["Timeout"] = 5,
+    ["Audio"] = false
+})
