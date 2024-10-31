@@ -426,7 +426,7 @@ task.defer(function()
     local Options = Fluent.Options
 
     local Window = Fluent:CreateWindow({
-        Title = "ninja Legends | 10/22/2024",
+        Title = "ninja Legends | 10/31/2024",
         SubTitle = "By Shion",
         TabWidth = shared.SettingUi.TabWidth,
         Size = UDim2.fromOffset(table.unpack(shared.SettingUi.Size)),
