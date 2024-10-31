@@ -1360,12 +1360,12 @@ LPH_JIT_MAX(function()
             end
 
             if Script.Teleports.UnlockIsland then
-                local number = random_number(1, 21)
-                local maxed = shared.YuriTables.Table.Island[number]
-                for i,v in pairs(workspace.islandUnlockParts[maxed]:GetChildren()) do
-                    if v.Name == "TouchInterest" and v.Parent then
-                        FireTouchPart(v.Parent)
-                    end
+                for _,index in next, shared.YuriTables.Table.Island do
+                    for i,v in pairs(workspace.islandUnlockParts[index]:GetChildren()) do
+                        if v.Name == "TouchInterest" and v.Parent then
+                            FireTouchPart(v.Parent)
+                        end
+                    end 
                 end
             end
 
