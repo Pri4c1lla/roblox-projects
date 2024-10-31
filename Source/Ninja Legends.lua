@@ -8,7 +8,7 @@ https://raw.githubusercontent.com/Pri4c1lla/Storage/refs/heads/main/Source/Ninja
 |  |-' `--'   `--'   `--' `---' `--'`--'`--' `--`--' 
 `--'                                                 
 
-Script by Thai.
+💕 สคริปต์โดยคนไทย เปิด src !(ห้ามเอาไปขาย หรือ obf / obfuscate)
 
 ]]
 
