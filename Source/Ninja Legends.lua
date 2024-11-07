@@ -11,7 +11,6 @@ https://raw.githubusercontent.com/Pri4c1lla/Storage/refs/heads/main/Source/Ninja
 💕 (ห้ามเอาไปขาย หรือ obf / obfuscate)
 
 ]]
-
 local LoadingTime = getgenv().AuthTime or tick()
 
 local function run(func) func() end
@@ -35,7 +34,6 @@ run(function()
     else
         return getgenv().setreadonly
     end
-    print(getgenv().setreadonly)
 end)
 
 function randomString()
@@ -146,11 +144,25 @@ run(function()
         local Pri4cillT1x = Instance.new("Folder")
         Pri4cillT1x.Name = shared.Yurikusa.Main.Folder
         Pri4cillT1x.Parent = workspace
-        getgenv().FolderName = Pri4cillT1x
+        shared.Folder = Pri4cillT1x
     end
 end)
 
 --// Utility function or shity function i make.
+
+local SkidExecutor = {
+    "Xeno", -- Can't fix firetouchinterest. cuz executor is so bad
+    "Forlorn", -- syn x remake. alot of crash | ลาว(กาก)เหมือนกับ xeno
+    "Solara" -- best free executor. less crash(if run over 30 time or more it will not injector 😂) than Syn x Remake, Xeno
+}
+
+run(function()
+    game.StarterGui:SetCore("SendNotification", {
+        Icon = "rbxassetid://9419562118";
+        Title = "Notification", 
+        Text = "Your Executor is "..executor_used,
+    })
+end)
 
 local function getchar()
     return lp.Character or lp.CharacterAdded:Wait()
@@ -368,12 +380,7 @@ if MainUi.StatusCode == 200 then
     --print(shared.Fluent)
 end
 
---// Addon function not in Main
-
-local SkidExecutor = {
-    "Xeno", -- can't ran ui
-    "Solara"
-}
+--// Addon function
 
 local function FireTouchPart(Part: BasePart) -- local function FireTouchPart(Part: BasePart). fuck you 
 	local TouchTransmitter = Part:FindFirstChildOfClass("TouchTransmitter")
@@ -388,7 +395,7 @@ local function FireTouchPart(Part: BasePart) -- local function FireTouchPart(Par
             firetouchinterest(Root, Part, 1)
         elseif executor_used == SkidExecutor then
             firetouchinterest(Root, Part, 1)
-            task.wait()
+            task.wait(.1)
         else
             firetouchinterest(Root, Part, 0)
             task.wait()
@@ -417,13 +424,23 @@ local function GetLastIsland()
 	return shared.YuriTables.Table.Island[#shared.YuriTables.Table.Island]
 end
 
+local function findchi() -- fix lag
+
+    for i,v in pairs(workspace.spawnedCoins.Valley:GetChildren()) do
+        if v.Name == "Pink Chi Crate" or v.Name == "Chi Crate" or v.Name == "Blue Chi Crate" or v.Name == "Chi" then
+            if not v:FindFirstChild("collected") then return v end
+        end
+    end
+
+end
+
 --! UI Initializer
 run(function()
     local Fluent = shared.Fluent
     local Options = Fluent.Options
 
     local Window = Fluent:CreateWindow({
-        Title = "ninja Legends | 11/3/2024",
+        Title = "ninja Legends | 11/6/2024",
         SubTitle = "By Shion",
         TabWidth = shared.SettingUi.TabWidth,
         Size = UDim2.fromOffset(table.unpack(shared.SettingUi.Size)),
@@ -557,7 +574,7 @@ run(function()
         Script.Main.Chest = v
         pcall(function()
             if Script.Main.Chest then
-                shared.CreateThered:newThread(nil,function(self)
+                shared.CreateThered:newThread(.25,function(self)
                     if not Script.Main.Chest then
                         self:Disable()
                     end
@@ -567,7 +584,7 @@ run(function()
                         }
                         ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("checkChestRemote"):InvokeServer(unpack(args))
                     end
-                    task.wait(1)
+                    task.wait(.5)
                 end)
             end
         end)
@@ -589,7 +606,7 @@ run(function()
     AutoHoops:OnChanged(function(v)
         Script.Main.Hoops = v
         if Script.Main.Hoops then
-            shared.CreateThered:newThread(.1,function(self)
+            shared.CreateThered:newThread(.25,function(self)
                 if not Script.Main.Hoops then
                     self:Disable()
                 end
@@ -1174,7 +1191,7 @@ run(function()
             if getchar() then
                 local hrp = gethumanoidrootpart()
                 if hrp then
-                    local cf = getgenv().Part.CFrame * CFrame.new(0,3,0)
+                    local cf = _G.MainPart.CFrame * CFrame.new(0,3,0)
                     hrp.CFrame = cf
                 end
             end
@@ -1240,15 +1257,9 @@ LPH_JIT_MAX(function()
                 end
             end
 
-            if Script.Main.Chi then
-                for i,v in pairs(workspace.spawnedCoins.Valley:GetChildren()) do
-                    --if string.match(v.Name, "Chi") then
-                    --if v.Name == "Chi" or v.Name == "Blue Chi Crate" or v.Name == "Chi Crate" then
-                    if v:IsA("Part") then
-                        if v:FindFirstChild("collected") then return end
-                        gethumanoidrootpart().CFrame = v.CFrame
-                    end
-                end
+            if Script.Main.Chi then -- idk why it so laggy 😂 -- maybe i will try on by run function.
+                local chi = findchi()
+                gethumanoidrootpart().CFrame = chi.CFrame
             end
 
 --[[
@@ -1492,7 +1503,7 @@ LPH_JIT_MAX(function()
             if getgenv().LazyToggle01 then
                 local hrp = getchar():FindFirstChild("HumanoidRootPart")
                 if hrp then
-                    local cf = getgenv().Part.CFrame * CFrame.new(0,3,0)
+                    local cf = _G.MainPart.CFrame * CFrame.new(0,3,0)
                     hrp.CFrame = cf
                     wait()
                 end
@@ -1509,20 +1520,20 @@ LPH_NO_VIRTUALIZE(function()
 	run(function()
 
         local no_part,yes_part = pcall(function()
-
-            assert(not getgenv().Safe_part)
-            getgenv().Safe_part = true;
-            getgenv().Part = Instance.new("Part",getgenv().FolderName)
-            getgenv().Part.Anchored = true
-            getgenv().Part.Size = Vector3.new(150,1,150)
+-- update for debug
+            assert(not _G.SafePart)
+            _G.SafePart = true;
+            _G.MainPart = Instance.new("Part",shared.Folder)
+            _G.MainPart.Anchored = true
+            _G.MainPart.Size = Vector3.new(150,1,150)
             local r = math.random(10000)
             local cf = Vector3.new(35e+3,35e+3,35e+3) + Vector3.new(r,r,r)
-            getgenv().Part.CFrame = CFrame.new(cf)
-            getgenv().Part.Material = Enum.Material.ForceField
+            _G.MainPart.CFrame = CFrame.new(cf)
+            _G.MainPart.Material = Enum.Material.ForceField
 
             shared.CreateThered:newThread(.025,function(self)
-                getgenv().Part.Name = game:GetService("HttpService"):GenerateGUID(false)
-                getgenv().Part.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+                _G.MainPart.Name = game:GetService("HttpService"):GenerateGUID(false)
+                _G.MainPart.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
             end)
 
         end)
@@ -1567,7 +1578,7 @@ end)()
 
 LPH_NO_VIRTUALIZE(function()
 	run(function()
-        if setfflag then
+        if setfflag and not IsOnMobile then
             setfflag("HumanoidParallelRemoveNoPhysics", "False")
             setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
         end
@@ -1576,7 +1587,7 @@ end)()
 
 -- unlock gamepass <3
 LPH_NO_VIRTUALIZE(function()
-	spawn(function()
+	run(function()
         pcall(function()
             
             warn("Unlocked Some Gamepass")
@@ -1606,7 +1617,7 @@ end)()
 ]]
 
 LPH_NO_VIRTUALIZE(function()
-	spawn(function()
+	run(function()
 		RunService.Stepped:Connect(function()
 
             pcall(function()
