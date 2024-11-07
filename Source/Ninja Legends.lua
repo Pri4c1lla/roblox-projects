@@ -11,6 +11,7 @@ https://raw.githubusercontent.com/Pri4c1lla/Storage/refs/heads/main/Source/Ninja
 💕 (ห้ามเอาไปขาย หรือ obf / obfuscate)
 
 ]]
+
 local LoadingTime = getgenv().AuthTime or tick()
 
 local function run(func) func() end
@@ -1548,41 +1549,63 @@ LPH_NO_VIRTUALIZE(function()
     end)
 end)()
 
+-- import from Luxury hub (old src)
 LPH_NO_VIRTUALIZE(function()
 	run(function()
-		RunService.RenderStepped:Connect(function()
-			pcall(function()
-				if Script.Main.Chi or Script.Boss.KillBoss or getgenv().LazyToggle01
-				then
-                    if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                        if not Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
-                            if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
-                                game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
+		RunService.Stepped:Connect(function()
+            pcall(function()
+
+                if Script.Main.Chi or Script.Boss.KillBoss or getgenv().LazyToggle01 
+                then
+                    if syn and setfflag
+                    then -- synapse x function
+                        setfflag("HumanoidParallelRemoveNoPhysics", "False")
+                        setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
+                        game.Players.LocalPlayer.Character.Humanoid:ChangeState(11) -- noclip work on synapse x
+                        if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
+                            game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
+                        end
+                    else
+                        if gethumanoidrootpart() then
+                            local Char = getchar()
+                            if Char:FindFirstChild("HumanoidRootPart") then
+                                if not Char.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
+                                    if Char:WaitForChild("Humanoid").Sit == true then
+                                        Char:WaitForChild("Humanoid").Sit = false
+                                    end
+                                    local Velocity = Instance.new("BodyVelocity",gethumanoidrootpart()) -- Set Parent to Humanoidrootpart
+                                    Velocity.Name = shared.Yurikusa.Main.Velocity
+                                    --Velocity.Parent =  Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                                    Velocity.MaxForce = Vector3.new(9e9,9e9,9e9);
+                                    Velocity.Velocity = Vector3.new(0,0,0);
+                                end
                             end
-                            local BodyVelocity = Instance.new("BodyVelocity")
-                            BodyVelocity.Name = shared.Yurikusa.Main.Velocity
-                            BodyVelocity.Parent =  Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                            BodyVelocity.MaxForce = Vector3.new(9e9,9e9,9e9);
-                            BodyVelocity.Velocity = Vector3.new(0,0,0);
+                            for _, part in pairs(lp.Character:GetDescendants()) do
+                                if part:IsA("BasePart") then
+                                    if noclipDefaults[part] == nil then
+                                        task.wait()
+                                        noclipDefaults[part] = part.CanCollide
+                                    else
+                                        if not Script.Main.Chi or not Script.Boss.KillBoss or not getgenv().LazyToggle01 or lp.Character:FindFirstChildWhichIsA("Humanoid").Health == 0
+                                        then
+                                            part.CanCollide = false
+                                        else
+                                            part.CanCollide = noclipDefaults[part]
+                                        end
+                                    end
+                                end
+                            end
+                        else
+                            if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
+                                game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity):Destroy();
+                            end
                         end
                     end
-                else
-					if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
-						game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity):Destroy();
-					end
-				end
-			end)
+                end
+
+            end)
 		end)
 	end)
-end)()
-
-LPH_NO_VIRTUALIZE(function()
-	run(function()
-        if setfflag and not IsOnMobile then
-            setfflag("HumanoidParallelRemoveNoPhysics", "False")
-            setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
-        end
-    end)
 end)()
 
 -- unlock gamepass <3
@@ -1593,7 +1616,7 @@ LPH_NO_VIRTUALIZE(function()
             warn("Unlocked Some Gamepass")
             for _,v in pairs(ReplicatedStorage.gamepassIds:GetChildren()) do
                 if v:IsA("IntValue") then
-                    if (v.Name ~= "+2 Pet Slots" and v.Name ~= "+3 Pet Slots" and v.Name ~= "+4 Pet Slots" and v.Name ~= "+60 Capacity" and v.Name ~= "+100 Capacity" and v.Name ~= "+200 Capacity" and v.Name ~= "+20 Capacity" and v.Name ~= "x3 Pet Clones" and v.Name ~= "Infinite Ninjitsu"  )then -- If it work, remove this line.
+                    if (v.Name ~= "+2 Pet Slots" and v.Name ~= "+3 Pet Slots" and v.Name ~= "+4 Pet Slots" and v.Name ~= "+60 Capacity" and v.Name ~= "+100 Capacity" and v.Name ~= "+200 Capacity" and v.Name ~= "+20 Capacity" and v.Name ~= "x3 Pet Clones" and v.Name ~= "Infinite Ninjitsu") then -- If it work, remove this line.
                         v:Clone()
                         v.Parent = lp.ownedGamepasses 
                         wait()
