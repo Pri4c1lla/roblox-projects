@@ -111,7 +111,7 @@ run(function()
     end
 end)
 
---// Utility function
+--// Utility function or shity function i make.
 
 local function getchar()
     return lp.Character or lp.CharacterAdded:Wait()
@@ -555,7 +555,7 @@ LPH_JIT_MAX(function()
             if Script.Main.Sample then
                 local args = {
                     [1] = 19, -- specific number
-                    [2] = gethumanoidrootpart().Position * CFrame.new(9e9,9e9,9e9)
+                    [2] = gethumanoidrootpart().Position * Vector3.new(9e9,9e9,9e9)
                 }
                 ReplicatedStorage.Signals.RemoteEvents.GetWoolRemote:FireServer(unpack(args))
             end
