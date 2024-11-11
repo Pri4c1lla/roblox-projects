@@ -12,7 +12,13 @@ https://raw.githubusercontent.com/Pri4c1lla/Storage/refs/heads/main/Source/Ninja
 
 ]]
 
-local LoadingTime = getgenv().AuthTime or tick()
+local LoadingTime = (getgenv().AuthTime) or tick()
+
+if getgenv().Shion_Loaded and not shared.Shion_Debug then
+    return -- 
+end
+
+pcall(function() getgenv().Shion_Loaded = true end)
 
 local function run(func) func() end
 
@@ -31,9 +37,9 @@ end)
 run(function()
     local suc , fail = pcall(function() return setreadonly(task,false) end)
     if suc then
-        return getgenv().setreadonly
+        return
     else
-        return getgenv().setreadonly
+        return
     end
 end)
 
@@ -58,17 +64,17 @@ end
 local MainThread = loadstring(game:HttpGet("https://raw.githubusercontent.com/Milkytillys/Megumint-Utilities/refs/heads/main/ThreadLooper.lua"))()
 shared.CreateThered = MainThread.new()
 
-local cloneref = cloneref or function(...) return ... end
+--local cloneref = cloneref or function(...) return ... end
 
-local Players = cloneref(game:GetService("Players"))
-local workspace = cloneref(game:GetService("Workspace"))
-local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
-local VirtualUser = cloneref(game:GetService("VirtualUser"))
+local Players = game:GetService("Players")
+local workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local VirtualUser = game:GetService("VirtualUser")
 local PlayerGui = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-local Lighting = cloneref(game:GetService("Lighting"))
-local RunService = cloneref(game:GetService("RunService"))
-local UserInputService = cloneref(game:GetService("UserInputService"))
-local TweenService = cloneref(game:GetService("TweenService"))
+local Lighting = game:GetService("Lighting")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 
 local lp = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -135,16 +141,15 @@ local Element = loadstring(game:HttpGet("https://gist.githubusercontent.com/Pri4
 
 shared.Yurikusa = {
     Main = {
-        ["Velocity"] = randomString(),
-        ["Folder"] = randomString()
+        ["Velocity"] = "Shion_"..randomString(),
+        ["Folder"] = "Shion_"..randomString()
     }
 }
 
 run(function()
     if not workspace:FindFirstChild(shared.Yurikusa.Main.Folder) then
-        local Pri4cillT1x = Instance.new("Folder")
+        local Pri4cillT1x = Instance.new("Folder",workspace)
         Pri4cillT1x.Name = shared.Yurikusa.Main.Folder
-        Pri4cillT1x.Parent = workspace
         shared.Folder = Pri4cillT1x
     end
 end)
@@ -152,17 +157,13 @@ end)
 --// Utility function or shity function i make.
 
 local SkidExecutor = {
-    "Xeno", -- Can't fix firetouchinterest. cuz executor is so bad
-    "Forlorn", -- syn x remake. alot of crash | ลาว(กาก)เหมือนกับ xeno
-    "Solara" -- best free executor. less crash(if run over 30 time or more it will not injector 😂) than Syn x Remake, Xeno
+    "Xeno", -- firetouchinterest is broken.
+    "Forlorn", -- syn x remake. alot of crash and firetouchinterest is broken too. | ลาว(กาก)เหมือนกับ xeno
+    "Solara" -- less crash. better than Syn x Remake, Xeno
 }
 
 run(function()
-    game.StarterGui:SetCore("SendNotification", {
-        Icon = "rbxassetid://9419562118";
-        Title = "Notification", 
-        Text = "Your Executor is "..executor_used,
-    })
+    warn("Your Executor is "..executor_used)
 end)
 
 local function getchar()
@@ -269,49 +270,40 @@ shared.YuriTables = {
         ["Crystal"] = {},
         ["SellArea"] = {},
         ["Boss"] = {},
-        ["Ranks"] = {},
-        ["Chest"] = {}
+        ["Ranks"] = {}
     }
 }
 
 run(function()
     local success,result = pcall(function()
 
-        task.defer(function()
+        for _,v in next, Players:GetPlayers() do
+            table.insert(shared.YuriTables.Table.Players, v.Name)
+        end
 
-            for _,v in next, Players:GetPlayers() do
-                table.insert(shared.YuriTables.Table.Players, v.Name)
-            end
-    
-            for i,v in pairs(workspace:FindFirstChild("islandUnlockParts"):GetChildren()) do
-                table.insert(shared.YuriTables.Table.Island, v.Name)
-            end
-    
-            for i,v in pairs(workspace.mapCrystalsFolder:GetChildren()) do
-                table.insert(shared.YuriTables.Table.Crystal, v.Name)
-            end
-    
-            for i,v in pairs(workspace.sellAreaCircles:GetChildren()) do
-                table.insert(shared.YuriTables.Table.SellArea, v.Name)
-            end
-    
-            for i,v in pairs(workspace.shopAreaCircles:GetChildren()) do
-                table.insert(shared.YuriTables.Table.Shop, v.Name)
-            end
-    
-            for i,v in pairs(workspace.bossFolder:GetChildren()) do
-                table.insert(shared.YuriTables.Table.Boss, v.Name)
-            end
-    
-            for i,v in pairs(ReplicatedStorage.Ranks.Ground:GetChildren()) do
-                table.insert(shared.YuriTables.Table.Ranks, v.Name)
-            end
-    
-            for i,v in pairs(ReplicatedStorage.chestRewards:GetChildren()) do
-                table.insert(shared.YuriTables.Table.Chest, v.Name)
-            end
+        for i,v in pairs(workspace:FindFirstChild("islandUnlockParts"):GetChildren()) do
+            table.insert(shared.YuriTables.Table.Island, v.Name)
+        end
 
-        end)
+        for i,v in pairs(workspace.mapCrystalsFolder:GetChildren()) do
+            table.insert(shared.YuriTables.Table.Crystal, v.Name)
+        end
+
+        for i,v in pairs(workspace.sellAreaCircles:GetChildren()) do
+            table.insert(shared.YuriTables.Table.SellArea, v.Name)
+        end
+
+        for i,v in pairs(workspace.shopAreaCircles:GetChildren()) do
+            table.insert(shared.YuriTables.Table.Shop, v.Name)
+        end
+
+        for i,v in pairs(workspace.bossFolder:GetChildren()) do
+            table.insert(shared.YuriTables.Table.Boss, v.Name)
+        end
+
+        for i,v in pairs(ReplicatedStorage.Ranks.Ground:GetChildren()) do
+            table.insert(shared.YuriTables.Table.Ranks, v.Name)
+        end
 
     end)
     if success then
@@ -425,14 +417,29 @@ local function GetLastIsland()
 	return shared.YuriTables.Table.Island[#shared.YuriTables.Table.Island]
 end
 
-local function findchi() -- fix lag
-
+local function findchi()
     for i,v in pairs(workspace.spawnedCoins.Valley:GetChildren()) do
         if v.Name == "Pink Chi Crate" or v.Name == "Chi Crate" or v.Name == "Blue Chi Crate" or v.Name == "Chi" then
             if not v:FindFirstChild("collected") then return v end
         end
     end
+end
 
+local function GetChestName()
+    for _,v in pairs(workspace:GetChildren()) do
+        if v:IsA("Model") and string.match(v.Name,"Chest") and not string.match(v.Name,"group") and not string.match(v.Name,"evil") and not string.match(v.Name,"light") and v.circleSignPart.signGui.timeLabel.text == "Ready To Collect" then
+            return v
+        end
+    end
+end
+
+local function CallNinjaEvent(com,...)
+    local Remote = lp:WaitForChild(com)
+    if Remote:IsA("RemoteEvent") then
+        Remote:FireServer(...)
+    elseif Remote:IsA("RemoteFunction") then
+        Remote:InvokeServer(...)
+    end
 end
 
 --! UI Initializer
@@ -441,7 +448,7 @@ run(function()
     local Options = Fluent.Options
 
     local Window = Fluent:CreateWindow({
-        Title = "ninja Legends | 11/6/2024",
+        Title = "ninja Legends | 11/11/2024",
         SubTitle = "By Shion",
         TabWidth = shared.SettingUi.TabWidth,
         Size = UDim2.fromOffset(table.unpack(shared.SettingUi.Size)),
@@ -475,7 +482,7 @@ run(function()
                     if not Script.Main.sword then
                         self:Disable()
                     end
-                    Players.LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllSwords",GetLastIsland())
+                    CallNinjaEvent("ninjaEvent","buyAllSwords",GetLastIsland())
                 end)
             end
         end)
@@ -490,7 +497,7 @@ run(function()
                     if not Script.Main.belts then
                         self:Disable()
                     end
-                    Players.LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllBelts",GetLastIsland())
+                    CallNinjaEvent("ninjaEvent","buyAllBelts",GetLastIsland())
                 end)
             end
         end)
@@ -505,7 +512,7 @@ run(function()
                     if not Script.Main.skills then
                         self:Disable()
                     end
-                    Players.LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllSkills",GetLastIsland())
+                    CallNinjaEvent("ninjaEvent","buyAllSkills",GetLastIsland())
                 end)
             end
         end)
@@ -520,7 +527,7 @@ run(function()
                     if not Script.Main.shurikens then
                         self:Disable()
                     end
-                    Players.LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllShurikens",GetLastIsland())
+                    CallNinjaEvent("ninjaEvent","buyAllShurikens",GetLastIsland())
                 end)
             end
         end)
@@ -536,7 +543,8 @@ run(function()
                         self:Disable()
                     end
                     for _, v in next, shared.YuriTables.Table.Ranks do
-                        Players.LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyRank", v)
+                        CallNinjaEvent("ninjaEvent","buyRank", v)
+                        wait()
                     end
                 end)
             end
@@ -575,17 +583,14 @@ run(function()
         Script.Main.Chest = v
         pcall(function()
             if Script.Main.Chest then
-                shared.CreateThered:newThread(.25,function(self)
+                shared.CreateThered:newThread(.1,function(self)
                     if not Script.Main.Chest then
                         self:Disable()
                     end
-                    for _,v in next, shared.YuriTables.Table.Chest do
-                        local args = {
-                            [1] = v
-                        }
-                        ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("checkChestRemote"):InvokeServer(unpack(args))
+                    local Chests = GetChestName()
+                    if Chests ~= nil then
+                        FireTouchPart(Chests.circleInner)
                     end
-                    task.wait(.5)
                 end)
             end
         end)
@@ -680,7 +685,7 @@ run(function()
     end)
 
     local ASM = Tabs.Main:AddDropdown("", {
-        Title = "Auto Sell Method",
+        Title = "Select Sell Method",
         Values = {"Instant","Full(Max)"},
         Multi = false,
         Default = 1,
@@ -1122,7 +1127,7 @@ run(function()
         Script.Eggs.open = v
     end)
 
-    local abop = Tabs.Misc:AddToggle("", {Title = "Allow Return Old Position", Description = "work with all function that mention to save old position.", Default = true })
+    local abop = Tabs.Misc:AddToggle("", {Title = "Allow Return Old Position", Description = "work with all function that mention save old position.", Default = true })
     abop:OnChanged(function(v)
         getgenv().AllowBackOldPos = v
     end)
@@ -1192,17 +1197,12 @@ run(function()
             if getchar() then
                 local hrp = gethumanoidrootpart()
                 if hrp then
-                    local cf = _G.MainPart.CFrame * CFrame.new(0,3,0)
+                    local cf = getgenv().MainPart.CFrame * CFrame.new(0,3,0)
                     hrp.CFrame = cf
                 end
             end
         end
     })
-
-    local lazytabs01 = Tabs.Misc:AddToggle("", {Title = "Loop Teleport to a safe place", Default = false })
-    lazytabs01:OnChanged(function(v)
-        getgenv().LazyToggle01 = v
-    end)
 
     run(function()
         NotificationLoad:NewNotification({
@@ -1249,7 +1249,7 @@ LPH_JIT_MAX(function()
                             task.spawn(function()
                                 get_sword:Activate()
                                 get_sword:Deactivate()
-                                lp:WaitForChild("ninjaEvent"):FireServer("swingKatana")
+                                CallNinjaEvent("ninjaEvent","swingKatana")
                             end)
                         elseif get_sword.Parent == lp.Backpack then
                             Humanoid:EquipTool(get_sword)
@@ -1263,40 +1263,11 @@ LPH_JIT_MAX(function()
                 gethumanoidrootpart().CFrame = chi.CFrame
             end
 
---[[
-            if Script.Main.Chest then
-                for i,v in pairs(workspace:GetChildren()) do
-                    if string.find(v.Name,"Chest") and not string.match(v.Name,"groupChest") then
-                        if v.circleSignPart.signGui.timeLabel.text == "Ready To Collect" then
-                            FireTouchPart(v.circleInner)
-                        end
-                    end
-                end
-            end
-]]
-
-            --[[
-            -- new (broken by Solara)
-            -- for _, v in pairs(shared.YuriTables.Table.Chest) do
-            for _,v in next, shared.YuriTables.Table.Chest do
-                local args = {
-                    [1] = v
-                }
-                ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("checkChestRemote"):InvokeServer(unpack(args))
-            end
-            -- old 
-            for i,v in pairs(workspace:GetChildren()) do
-                if string.find(v.Name,"Chest") and not string.match(v.Name,"groupChest") then
-                    if not v.circleSignPart.signGui.timeLabel.text == "Ready To Collect" then return end
-                    FireTouchPart(v.circleInner)
-                end
-            end
-            ]]
-
             if Script.Boss.KillBoss then
                 for i,v in pairs(workspace.bossFolder:GetChildren()) do
-                    if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid") and v:FindFirstChildOfClass("Humanoid").Health > 0 then
-                        gethumanoidrootpart().CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0,5,7)
+                    if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid") then
+                        gethumanoidrootpart().CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0,5,3)
+                        wait()
                     end
                 end
             end
@@ -1438,7 +1409,7 @@ LPH_JIT_MAX(function()
 						if v:FindFirstChild("BodyVelocity") then
 							local bv = v:FindFirstChildOfClass("BodyVelocity")
 							bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                            bv.Velocity = getgenv().PositionMain * 1000
+                            bv.Velocity = getgenv().PositionTarget * 1000
 						end
 					end
 				end
@@ -1447,19 +1418,20 @@ LPH_JIT_MAX(function()
             if Script.Misc.KillAura then
                 for _,v in next, Players:GetPlayers() do
                     if v.Name ~= lp.Name then
-                        local magI = (v.Character.HumanoidRootPart.Position - lp.Character.HumanoidRootPart.Position).magnitude
+                        local magI = (v.Character:WaitForChild("HumanoidRootPart").Position - gethumanoidrootpart().Position).magnitude
                         if magI < Script.Misc.RangeRadius and not v.Character:FindFirstChild("inSafezone") and not getchar():FindFirstChild("inSafezone") then
                             for i,v in pairs(lp:FindFirstChildOfClass("Backpack"):GetChildren()) do
                                 if string.match(v.Name,"Shuriken") then
                                     v.Parent = lp.Character
+                                    wait()
                                 end
                             end
                             local args = {
                                 [1] = "attackShuriken",
                                 [2] = v.Character:FindFirstChild("HumanoidRootPart").Position
                             }
-                            getgenv().PositionMain = v.Character:FindFirstChild("HumanoidRootPart").Position
-                            lp:WaitForChild("ninjaEvent"):FireServer(unpack(args))
+                            getgenv().PositionTarget = v.Character:FindFirstChild("HumanoidRootPart").Position
+                            CallNinjaEvent("ninjaEvent",unpack(args))
                         end
                     end
                 end
@@ -1489,25 +1461,15 @@ LPH_JIT_MAX(function()
                 repeat wait(.1)
                     Camera.CameraSubject = Players:FindFirstChild(Script.Players.SelectPlayers).Character:FindFirstChildOfClass("Humanoid")
                 until not Players:FindFirstChild(Script.Players.SelectPlayers) or not Script.Players.IsSpectator
-                task.defer(function()
+                run(function()
                     Camera.CameraSubject = lp.Character:FindFirstChildOfClass("Humanoid")
                 end)
-                --Camera.CameraSubject = lp.Character:FindFirstChildOfClass("Humanoid")
             end
     
             if Script.Players.TeleportPlayers then
                 repeat wait(.1)
                     gethumanoidrootpart().CFrame = Players:FindFirstChild(Script.Players.SelectPlayers).Character.HumanoidRootPart.CFrame * CFrame.new(0,0,5)
                 until not Players:FindFirstChild(Script.Players.SelectPlayers) or Script.Players.TeleportPlayers == false or not Script.Players.TeleportPlayers
-            end
-
-            if getgenv().LazyToggle01 then
-                local hrp = getchar():FindFirstChild("HumanoidRootPart")
-                if hrp then
-                    local cf = _G.MainPart.CFrame * CFrame.new(0,3,0)
-                    hrp.CFrame = cf
-                    wait()
-                end
             end
 
         end)
@@ -1522,19 +1484,19 @@ LPH_NO_VIRTUALIZE(function()
 
         local no_part,yes_part = pcall(function()
 -- update for debug
-            assert(not _G.SafePart)
-            _G.SafePart = true;
-            _G.MainPart = Instance.new("Part",shared.Folder)
-            _G.MainPart.Anchored = true
-            _G.MainPart.Size = Vector3.new(150,1,150)
+            assert(not getgenv().SafePart)
+            getgenv().SafePart = true;
+            getgenv().MainPart = Instance.new("Part",shared.Folder)
+            getgenv().MainPart.Anchored = true
+            getgenv().MainPart.Size = Vector3.new(150,1,150)
             local r = math.random(10000)
-            local cf = Vector3.new(35e+3,35e+3,35e+3) + Vector3.new(r,r,r)
-            _G.MainPart.CFrame = CFrame.new(cf)
-            _G.MainPart.Material = Enum.Material.ForceField
+            local cf = Vector3.new(35e+3,35e+3,35e+3) + Vector3.new(r,r,r) -- 35e+3 = 35000
+            getgenv().MainPart.CFrame = CFrame.new(cf)
+            getgenv().MainPart.Material = Enum.Material.ForceField
 
-            shared.CreateThered:newThread(.025,function(self)
-                _G.MainPart.Name = game:GetService("HttpService"):GenerateGUID(false)
-                _G.MainPart.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+            shared.CreateThered:newThread(.25,function(self)
+                getgenv().MainPart.Name = game:GetService("HttpService"):GenerateGUID(false)
+                getgenv().MainPart.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
             end)
 
         end)
@@ -1553,7 +1515,7 @@ LPH_NO_VIRTUALIZE(function()
 	run(function()
 		RunService.Stepped:Connect(function()
             pcall(function()
-                if Script.Main.Chi or Script.Boss.KillBoss or getgenv().LazyToggle01 then
+                if Script.Main.Chi or Script.Boss.KillBoss then
                     if syn then
                         setfflag("HumanoidParallelRemoveNoPhysics", "False")
                         setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
@@ -1582,7 +1544,7 @@ LPH_NO_VIRTUALIZE(function()
                                         task.wait()
                                         noclipDefaults[part] = part.CanCollide
                                     else
-                                        if not Script.Main.Chi or not Script.Boss.KillBoss or not getgenv().LazyToggle01 or lp.Character:FindFirstChildWhichIsA("Humanoid").Health == 0
+                                        if not Script.Main.Chi or not Script.Boss.KillBoss or lp.Character:FindFirstChildWhichIsA("Humanoid").Health == 0
                                         then
                                             part.CanCollide = false
                                         else
@@ -1595,12 +1557,14 @@ LPH_NO_VIRTUALIZE(function()
                         end
                     end
                 else
-                    if not Script.Main.Chi or not Script.Boss.KillBoss or not getgenv().LazyToggle01 then
+                    if not Script.Main.Chi or not Script.Boss.KillBoss then
                         if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
                             game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity):Destroy();
+                            wait()
                         end
                         if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand ~= false then
                             game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand = false
+                            wait()
                         end
                     end
                 end
@@ -1609,16 +1573,17 @@ LPH_NO_VIRTUALIZE(function()
     end)
 end)()
 
--- unlock gamepass <3
+-- line 98 : https://gist.githubusercontent.com/Pri4c1lla/735f01ef6808d6d14fc9326503277ce4/raw/dc67cc4f711ff5bcc69b715ad60c9411efb57cb0/decompiled.lua
 LPH_NO_VIRTUALIZE(function()
 	run(function()
         pcall(function()
             
-            warn("Unlocked Some Gamepass")
+            warn("Unlocked Some Gamepass (Client)")
             for _,v in pairs(ReplicatedStorage.gamepassIds:GetChildren()) do
                 if v:IsA("IntValue") then
                     if (v.Name ~= "+2 Pet Slots" and v.Name ~= "+3 Pet Slots" and v.Name ~= "+4 Pet Slots" and v.Name ~= "+60 Capacity" and v.Name ~= "+100 Capacity" and v.Name ~= "+200 Capacity" and v.Name ~= "+20 Capacity" and v.Name ~= "x3 Pet Clones" and v.Name ~= "Infinite Ninjitsu") then -- If it work, remove this line.
                         v:Clone()
+                        v.Value = nil
                         v.Parent = lp.ownedGamepasses 
                         wait()
                     end
@@ -1630,16 +1595,15 @@ LPH_NO_VIRTUALIZE(function()
 end)()
 
 -- remove ads
---[[
 LPH_NO_VIRTUALIZE(function()
-	spawn(function()
+	run(function()
         if game:GetService("Players").LocalPlayer.adsAllowed.Value ~= false then
             game:GetService("Players").LocalPlayer.adsAllowed.Value = false
         end
     end)
 end)()
-]]
 
+--[[
 LPH_NO_VIRTUALIZE(function()
 	run(function()
 		RunService.Stepped:Connect(function()
@@ -1659,6 +1623,7 @@ LPH_NO_VIRTUALIZE(function()
 		end)
 	end)
 end)()
+]]
 
 -- for config~
 LPH_NO_VIRTUALIZE(function()
@@ -1673,7 +1638,6 @@ LPH_NO_VIRTUALIZE(function()
                 ["Audio"] = false
             })
             
-
             local getconnect = getconnections or get_signal_cons
 
             if getconnect then
