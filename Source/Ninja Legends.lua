@@ -84,8 +84,6 @@ local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 local getMouse = Players.LocalPlayer:GetMouse()
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 local executor_used = tostring(identifyexecutor())
-origsettings = {abt = Lighting.Ambient, oabt = Lighting.OutdoorAmbient, brt = Lighting.Brightness, time = Lighting.ClockTime, fe = Lighting.FogEnd, fs = Lighting.FogStart, gs = Lighting.GlobalShadows}
-
 -- Marco Luraph
 
 if not LPH_OBFUSCATED then
@@ -136,7 +134,7 @@ local AreaCFrame = {
     [8] = CFrame.new(5041.17725, 82.2061615, 1614.74866, 0.258864343, -0, -0.965913713, 0, 1, -0, 0.965913713, 0, 0.258864343), -- Light 5000
 }
 
--- lazy to obfuscate
+-- จริงๆ ไม่ต้องใช้ loadstring นอกก็ได้ (ก็เพิ่งจะนึกได้ 5555555)
 local Element = loadstring(game:HttpGet("https://gist.githubusercontent.com/Pri4c1lla/ed34be9357bddcb2b28c6513c5621941/raw/ac26ebcc81d55b005845860079a0a7fb12f2101d/Element.lua"))()
 
 shared.Yurikusa = {
@@ -156,7 +154,7 @@ end)
 
 --// Utility function or shity function i make.
 
-local SkidExecutor = {
+local FineExecutors = {
     "Xeno", -- firetouchinterest is broken.
     "Forlorn", -- syn x remake. alot of crash and firetouchinterest is broken too. | ลาว(กาก)เหมือนกับ xeno
     "Solara" -- less crash. better than Syn x Remake, Xeno
@@ -243,7 +241,7 @@ local function Floating()
     end
 end
 
---// All Configuration and Table(Main table) Below Here.
+--// All Configuration Below Here.
 
 local MinimizeKey = getgenv().MinimizeKey
 
@@ -375,18 +373,18 @@ end
 
 --// Addon function
 
-local function FireTouchPart(Part: BasePart) -- local function FireTouchPart(Part: BasePart). fuck you 
+local function FireTouchPart(Part: BasePart)
 	local TouchTransmitter = Part:FindFirstChildOfClass("TouchTransmitter")
 	if not TouchTransmitter then return end
 
 	local Root = gethumanoidrootpart()
 
 	if firetouchinterest then
-        if not IsOnMobile and executor_used ~= SkidExecutor then
+        if not IsOnMobile and executor_used ~= FineExecutors then
             firetouchinterest(Root, Part, 0)
             task.wait()
             firetouchinterest(Root, Part, 1)
-        elseif executor_used == SkidExecutor then
+        elseif executor_used == FineExecutors then
             firetouchinterest(Root, Part, 1)
             task.wait(.1)
         else
@@ -423,6 +421,7 @@ local function findchi()
             if not v:FindFirstChild("collected") then return v end
         end
     end
+    return nil
 end
 
 local function GetChestName()
@@ -431,6 +430,7 @@ local function GetChestName()
             return v
         end
     end
+    return nil
 end
 
 local function CallNinjaEvent(com,...)
@@ -440,6 +440,13 @@ local function CallNinjaEvent(com,...)
     elseif Remote:IsA("RemoteFunction") then
         Remote:InvokeServer(...)
     end
+end
+
+local function EquipShuriken()
+    for _,v in pairs(lp:FindFirstChildOfClass("Backpack"):GetDescendants()) do
+        if string.match(tostring(v.Name),"Shuriken") then return v end
+    end
+    return nil
 end
 
 --! UI Initializer
@@ -578,7 +585,7 @@ run(function()
         end
     })
 
-    local CollectChests = Tabs.Main:AddToggle("", {Title = "Collect All Chests", Description = "Collecting Is Slow.", Default = false})
+    local CollectChests = Tabs.Main:AddToggle("", {Title = "Collect All Chests", Description = "Collecting is find (maybe😂)", Default = false})
     CollectChests:OnChanged(function(v)
         Script.Main.Chest = v
         pcall(function()
@@ -649,23 +656,10 @@ run(function()
         Title = "Click To open",
         Description = "",
         Callback = function()
-            local suc , fail = pcall(function()
-                for i,v in pairs(workspace.shopAreaCircles:GetChildren()) do
-                    if string.find(v.Name,Script.Main.typeshop) then
-                        FireTouchPart(v.circleInner)
-                    end
+            for i,v in pairs(workspace.shopAreaCircles:GetChildren()) do
+                if string.find(v.Name,Script.Main.typeshop) then
+                    FireTouchPart(v.circleInner)
                 end
-            end)
-            if suc then
-                return
-            else
-                NotificationLoad:NewNotification({
-                    ["Mode"] = "error",
-                    ["Title"] = "Failed to open : error below",
-                    ["Description"] = fail,
-                    ["Timeout"] = 15,
-                    ["Audio"] = false
-                })
             end
         end
     })
@@ -696,13 +690,13 @@ run(function()
     ASM:OnChanged(function(v)
        Script.Main.typeSell = v
     end)
-    
+
     local AutoSell = Tabs.Main:AddToggle("", {Title = "Auto Sell", Description = "", Default = false})
     AutoSell:OnChanged(function(v)
         Script.Main.Sell = v
             pcall(function()
             if Script.Main.Sell then
-                shared.CreateThered:newThread(0,function(self)
+                shared.CreateThered:newThread(nil,function(self)
                     if not Script.Main.Sell then
                         self:Disable()
                     end
@@ -720,8 +714,6 @@ run(function()
                                 end
                             end
                         end
-                    else
-                        return
                     end
                 end)
             end
@@ -772,14 +764,8 @@ run(function()
     KillBoss:OnChanged(function(v)
         Script.Boss.KillBoss = v
         pcall(function()
-            if Script.Boss.KillBoss and getgenv().AllowBackOldPos then
-                oldpos = gethumanoidrootpart().CFrame
+            if Script.Boss.KillBoss then
                 getgenv().needatk = true
-            elseif Script.Boss.KillBoss and not getgenv().AllowBackOldPos then
-                getgenv().needatk = true
-            elseif not Script.Boss.KillBoss then
-                gethumanoidrootpart().CFrame = oldpos
-                getgenv().needatk = false
             else
                 getgenv().needatk = false
             end
@@ -899,15 +885,12 @@ run(function()
                     end
                 end
             else
-                for _,v in pairs(gethumanoidrootpart():GetDescendants()) do
-                    if v:IsA("BodyGyro") or v:IsA("BodyVelocity") then
-                        --v.Parent = nil
-                        task.defer(function()
-                            v.Parent = nil
-                            getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
-                        end)
-                    end
-                end
+                run(function()
+                    shared.AngularVC.Parent = nil
+                    shared.FlightGyro.Parent = nil
+                    shared.FlightBV.Parent = nil
+                    getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
+                end)
             end
         end,
     })
@@ -924,15 +907,12 @@ run(function()
                 end
             end
         else
-            for _,v in pairs(gethumanoidrootpart():GetDescendants()) do
-                if v:IsA("BodyGyro") or v:IsA("BodyVelocity") then
-                    --v.Parent = nil
-                    task.defer(function()
-                        v.Parent = nil
-                        getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
-                    end)
-                end
-            end
+            run(function()
+                shared.AngularVC.Parent = nil
+                shared.FlightGyro.Parent = nil
+                shared.FlightBV.Parent = nil
+                getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
+            end)
         end
     end)
 
@@ -1258,7 +1238,7 @@ LPH_JIT_MAX(function()
                 end
             end
 
-            if Script.Main.Chi then -- idk why it so laggy 😂 -- maybe i will try on by run function.
+            if Script.Main.Chi then
                 local chi = findchi()
                 gethumanoidrootpart().CFrame = chi.CFrame
             end
@@ -1291,6 +1271,10 @@ LPH_JIT_MAX(function()
                         bodyAngularVelocity.P = 9e9
             
                         movers = { bodyVelocity, bodyGyro, bodyAngularVelocity }
+
+                        shared.FlightBV = bodyVelocity
+                        shared.FlightGyro = bodyGyro
+                        shared.AngularVC = bodyAngularVelocity
                     end
             
                     if Script.Main.flight or Script.Main.flightmb then
@@ -1399,7 +1383,7 @@ LPH_JIT_MAX(function()
 						if v:FindFirstChild("BodyVelocity") then
 							local bv = v:FindFirstChildOfClass("BodyVelocity")
 							bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-							bv.Velocity = getMouse.Hit.lookVector * 1000
+							bv.Velocity = getMouse.Hit.lookVector * math.random(10000)
 						end
 					end
 				end
@@ -1409,7 +1393,7 @@ LPH_JIT_MAX(function()
 						if v:FindFirstChild("BodyVelocity") then
 							local bv = v:FindFirstChildOfClass("BodyVelocity")
 							bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                            bv.Velocity = getgenv().PositionTarget * 1000
+                            bv.Velocity = getgenv().PositionTarget * math.random(10000)
 						end
 					end
 				end
@@ -1418,20 +1402,19 @@ LPH_JIT_MAX(function()
             if Script.Misc.KillAura then
                 for _,v in next, Players:GetPlayers() do
                     if v.Name ~= lp.Name then
-                        local magI = (v.Character:WaitForChild("HumanoidRootPart").Position - gethumanoidrootpart().Position).magnitude
-                        if magI < Script.Misc.RangeRadius and not v.Character:FindFirstChild("inSafezone") and not getchar():FindFirstChild("inSafezone") then
-                            for i,v in pairs(lp:FindFirstChildOfClass("Backpack"):GetChildren()) do
-                                if string.match(v.Name,"Shuriken") then
-                                    v.Parent = lp.Character
-                                    wait()
-                                end
-                            end
-                            local args = {
-                                [1] = "attackShuriken",
-                                [2] = v.Character:FindFirstChild("HumanoidRootPart").Position
-                            }
+                        local i = (v.Character:FindFirstChild("HumanoidRootPart").Position - gethumanoidrootpart().Position).magnitude
+                        if i <= Script.Misc.RangeRadius and not v.Character:FindFirstChild("inSafezone") and not getchar():FindFirstChild("inSafezone") then
                             getgenv().PositionTarget = v.Character:FindFirstChild("HumanoidRootPart").Position
-                            CallNinjaEvent("ninjaEvent",unpack(args))
+                            local x = EquipShuriken()
+                            if x ~= nil then
+                                x.Parent = getchar()
+                                wait()
+                                local args = {
+                                    [1] = "attackShuriken",
+                                    [2] = v.Character:FindFirstChild("HumanoidRootPart").Position
+                                }
+                                CallNinjaEvent("ninjaEvent",unpack(args)) 
+                            end
                         end
                     end
                 end
@@ -1573,7 +1556,6 @@ LPH_NO_VIRTUALIZE(function()
     end)
 end)()
 
--- line 98 : https://gist.githubusercontent.com/Pri4c1lla/735f01ef6808d6d14fc9326503277ce4/raw/dc67cc4f711ff5bcc69b715ad60c9411efb57cb0/decompiled.lua
 LPH_NO_VIRTUALIZE(function()
 	run(function()
         pcall(function()
