@@ -455,7 +455,7 @@ run(function()
     local Options = Fluent.Options
 
     local Window = Fluent:CreateWindow({
-        Title = "ninja Legends | 11/11/2024",
+        Title = "ninja Legends | 11/20/2024",
         SubTitle = "By Shion",
         TabWidth = shared.SettingUi.TabWidth,
         Size = UDim2.fromOffset(table.unpack(shared.SettingUi.Size)),
@@ -1256,7 +1256,7 @@ LPH_JIT_MAX(function()
                 end
             end
 
-            if Script.Main.flight or Script.Main.flightmb then
+            if Script.Main.flight or Script.Players.flightmb then
                 local character = getchar()
                 local primaryPart = character and character.PrimaryPart
                 if primaryPart then
@@ -1281,7 +1281,7 @@ LPH_JIT_MAX(function()
                         shared.AngularVC = bodyAngularVelocity
                     end
             
-                    if Script.Main.flight or Script.Main.flightmb then
+                    if Script.Main.flight or Script.Players.flightmb then
                         local camCFrame = Camera.CFrame
                         local velocity = Vector3.zero
                         local rotation = camCFrame.Rotation
