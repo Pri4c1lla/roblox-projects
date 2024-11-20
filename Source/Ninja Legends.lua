@@ -885,12 +885,14 @@ run(function()
                     end
                 end
             else
-                run(function()
+            run(function()
+                pcall(function()
                     shared.AngularVC.Parent = nil
                     shared.FlightGyro.Parent = nil
                     shared.FlightBV.Parent = nil
                     getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
                 end)
+            end)
             end
         end,
     })
@@ -908,10 +910,12 @@ run(function()
             end
         else
             run(function()
-                shared.AngularVC.Parent = nil
-                shared.FlightGyro.Parent = nil
-                shared.FlightBV.Parent = nil
-                getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
+                pcall(function()
+                    shared.AngularVC.Parent = nil
+                    shared.FlightGyro.Parent = nil
+                    shared.FlightBV.Parent = nil
+                    getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
+                end)
             end)
         end
     end)
