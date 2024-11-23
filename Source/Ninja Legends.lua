@@ -12,10 +12,18 @@ https://raw.githubusercontent.com/Pri4c1lla/Storage/refs/heads/main/Source/Ninja
 
 ]]
 
-local LoadingTime = (getgenv().AuthTime) or tick()
+local function AuthTimes()
+    if getgenv().AuthTime ~= nil then
+        return getgenv().AuthTime
+    else
+        return tick()
+    end
+end
+
+local LoadingTime = AuthTimes()
 
 if getgenv().Shion_Loaded and not shared.Shion_Debug then
-    return -- 
+    return
 end
 
 pcall(function() getgenv().Shion_Loaded = true end)
@@ -24,23 +32,25 @@ local function run(func) func() end
 
 -- wait for load
 run(function()
+	repeat
+		wait()
+	until game:IsLoaded()
+	repeat
+		wait()
+	until game.Players
+	repeat
+		wait()
+	until game.Players.LocalPlayer
+	repeat
+		wait()
+	until game:GetService("ReplicatedStorage")
+	repeat
+		wait()
+	until game:GetService("Players")
+	repeat
+		wait()
+	until game:GetService("Players").LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
 
-    repeat wait() until game:IsLoaded()
-    repeat wait() until game.Players
-    repeat wait() until game.Players.LocalPlayer
-    repeat wait() until game:GetService("ReplicatedStorage")
-    repeat wait() until game:GetService("Players")
-    repeat wait() until game:GetService("Players").LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-
-end)
-
-run(function()
-    local suc , fail = pcall(function() return setreadonly(task,false) end)
-    if suc then
-        return
-    else
-        return
-    end
 end)
 
 function randomString()
@@ -52,6 +62,7 @@ function randomString()
 	return table.concat(array)
 end
 
+--[[
 function randomStr()
     local str = ""
     for _ = 1, math.random(8,15) do
@@ -59,8 +70,9 @@ function randomStr()
     end
     return str
 end
+]]
 
---// variable and service
+--// Var
 local MainThread = loadstring(game:HttpGet("https://raw.githubusercontent.com/Milkytillys/Megumint-Utilities/refs/heads/main/ThreadLooper.lua"))()
 shared.CreateThered = MainThread.new()
 
@@ -84,8 +96,8 @@ local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 local getMouse = Players.LocalPlayer:GetMouse()
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
 local executor_used = tostring(identifyexecutor())
--- Marco Luraph
 
+-- Marco Luraph
 if not LPH_OBFUSCATED then
     LPH_JIT_MAX = (function(...) return ... end)
     LPH_JIT = (function(...) return ... end)
@@ -153,7 +165,6 @@ run(function()
 end)
 
 --// Utility function or shity function i make.
-
 local FineExecutors = {
     "Xeno", -- firetouchinterest is broken.
     "Forlorn", -- syn x remake. alot of crash and firetouchinterest is broken too. | ลาว(กาก)เหมือนกับ xeno
@@ -172,7 +183,7 @@ local function gethumanoidrootpart()
     return getchar():FindFirstChild("HumanoidRootPart")
 end
 
-function r15(plr)
+function r15(plr) -- if (players) is R15 will return true if not then return false
 	if plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
 		return true
 	end
@@ -260,7 +271,7 @@ shared.SettingUi = {
     ["MinimizeKey"] = shared.Mizekey.MinimizeKey,
 }
 
-shared.YuriTables = {
+shared.tables = {
     Table = {
         ["Players"] = {},
         ["Shop"] = {},
@@ -275,39 +286,39 @@ shared.YuriTables = {
 run(function()
     local success,result = pcall(function()
 
-        for _,v in next, Players:GetPlayers() do
-            table.insert(shared.YuriTables.Table.Players, v.Name)
+        for i,v in next, Players:GetPlayers() do
+            table.insert(shared.tables.Table.Players, v.Name)
         end
 
         for i,v in pairs(workspace:FindFirstChild("islandUnlockParts"):GetChildren()) do
-            table.insert(shared.YuriTables.Table.Island, v.Name)
+            table.insert(shared.tables.Table.Island, v.Name)
         end
 
         for i,v in pairs(workspace.mapCrystalsFolder:GetChildren()) do
-            table.insert(shared.YuriTables.Table.Crystal, v.Name)
+            table.insert(shared.tables.Table.Crystal, v.Name)
         end
 
         for i,v in pairs(workspace.sellAreaCircles:GetChildren()) do
-            table.insert(shared.YuriTables.Table.SellArea, v.Name)
+            table.insert(shared.tables.Table.SellArea, v.Name)
         end
 
         for i,v in pairs(workspace.shopAreaCircles:GetChildren()) do
-            table.insert(shared.YuriTables.Table.Shop, v.Name)
+            table.insert(shared.tables.Table.Shop, v.Name)
         end
 
         for i,v in pairs(workspace.bossFolder:GetChildren()) do
-            table.insert(shared.YuriTables.Table.Boss, v.Name)
+            table.insert(shared.tables.Table.Boss, v.Name)
         end
 
         for i,v in pairs(ReplicatedStorage.Ranks.Ground:GetChildren()) do
-            table.insert(shared.YuriTables.Table.Ranks, v.Name)
+            table.insert(shared.tables.Table.Ranks, v.Name)
         end
 
     end)
     if success then
-        warn("Loaded")
+        return
     else
-        warn("Error: "..result)
+        return("Error: "..result)
     end
 end)
 
@@ -368,11 +379,9 @@ local MainUi = httprequest({
 })
 if MainUi.StatusCode == 200 then
     shared.Fluent = getfenv().loadstring(MainUi.Body)()
-    --print(shared.Fluent)
 end
 
 --// Addon function
-
 local function FireTouchPart(Part: BasePart)
 	local TouchTransmitter = Part:FindFirstChildOfClass("TouchTransmitter")
 	if not TouchTransmitter then return end
@@ -412,14 +421,17 @@ local function GetSword()
 end
 
 local function GetLastIsland()
-	return shared.YuriTables.Table.Island[#shared.YuriTables.Table.Island]
+	return shared.tables.Table.Island[#shared.tables.Table.Island]
 end
 
 local function findchi()
     for i,v in pairs(workspace.spawnedCoins.Valley:GetChildren()) do
-        if v.Name == "Pink Chi Crate" or v.Name == "Chi Crate" or v.Name == "Blue Chi Crate" or v.Name == "Chi" then
+        if string.match(v.Name,"Chi") then if not v:FindFirstChild("collected") then return v end end
+        --[[
+        if (v.Name == "Pink Chi Crate" or v.Name == "Chi Crate" or v.Name == "Blue Chi Crate" or v.Name == "Chi") then
             if not v:FindFirstChild("collected") then return v end
         end
+        ]]
     end
     return nil
 end
@@ -549,7 +561,7 @@ run(function()
                     if not Script.Main.Ranks  then
                         self:Disable()
                     end
-                    for _, v in next, shared.YuriTables.Table.Ranks do
+                    for _, v in next, shared.tables.Table.Ranks do
                         CallNinjaEvent("ninjaEvent","buyRank", v)
                         wait()
                     end
@@ -641,7 +653,7 @@ run(function()
     local openshop = Tabs.Main:AddDropdown("", {
         Title = "Open Shop",
         Description = "",
-        Values = shared.YuriTables.Table.Shop,
+        Values = shared.tables.Table.Shop,
         Multi = false,
         Default = 1,
     })
@@ -667,7 +679,7 @@ run(function()
     local SEC = Tabs.Main:AddDropdown("", {
         Title = "Sell Area",
         Description = "Select a Sell Part",
-        Values = shared.YuriTables.Table.SellArea,
+        Values = shared.tables.Table.SellArea,
         Multi = false,
         Default = 1,
     })
@@ -707,7 +719,7 @@ run(function()
                             end
                         end
                     elseif Script.Main.typeSell == "Full(max)" then
-                        if PlayerGui.gameGui.maxNinjitsuMenu.Visible == true then
+                        if PlayerGui.gameGui.maxNinjitsuMenu.Visible ~= false then
                             for i,v in pairs(workspace.sellAreaCircles:GetChildren()) do
                                 if string.find(v.Name,Script.Main.SellPart) then
                                     FireTouchPart(v.circleInner)
@@ -737,7 +749,7 @@ run(function()
 
     local SB = Tabs.Boss:AddDropdown("Dropdown", {
         Title = "Select Boss",
-        Values = shared.YuriTables.Table.Boss,
+        Values = shared.tables.Table.Boss,
         Multi = false,
         Default = 1,
     })
@@ -784,7 +796,7 @@ run(function()
     
     local SelectPlr = Tabs.Players:AddDropdown("SelectedPlyer", {
         Title = "Players",
-        Values = shared.YuriTables.Table.Players,
+        Values = shared.tables.Table.Players,
         Multi = false,
         Default = 1,
     })
@@ -872,7 +884,7 @@ run(function()
     local FlysKeybind = Tabs.Players:AddKeybind("Flying", {
         Title = "flight",
         Mode = "Toggle",
-        Description = "Noclip Function Built In",
+        Description = "Noclip Built In",
         Default = "N",
         Callback = function(v)
             Script.Main.flight = v
@@ -885,14 +897,16 @@ run(function()
                     end
                 end
             else
-            run(function()
-                pcall(function()
-                    shared.AngularVC.Parent = nil
-                    shared.FlightGyro.Parent = nil
-                    shared.FlightBV.Parent = nil
-                    getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
+                run(function()
+                    pcall(function()
+                        if (shared.AngularVC.Parent ~= nil and shared.FlightGyro.Parent ~= nil and shared.FlightBV.Parent ~= nil) then
+                            shared.AngularVC.Parent = nil;
+                            shared.FlightGyro.Parent = nil;
+                            shared.FlightBV.Parent = nil;
+                            getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false;
+                        end
+                    end)
                 end)
-            end)
             end
         end,
     })
@@ -900,7 +914,7 @@ run(function()
     local FlyToggle = Tabs.Players:AddToggle("FlyingMoblie", {Title = "Fly", Description = "Toggle Fly For Mobile Users", Default = false })
     FlyToggle:OnChanged(function(v)
         Script.Players.flightmb = v
-        if Script.Players.flightmb then
+        if Script.Players.flightmb and IsOnMobile and not shared.Shion_Debug then
             while Script.Players.flightmb do task.wait()
                 local character = getchar()
                 local humanoid = character and character:FindFirstChildOfClass("Humanoid")
@@ -911,10 +925,12 @@ run(function()
         else
             run(function()
                 pcall(function()
-                    shared.AngularVC.Parent = nil
-                    shared.FlightGyro.Parent = nil
-                    shared.FlightBV.Parent = nil
-                    getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false
+                    if (shared.AngularVC.Parent ~= nil and shared.FlightGyro.Parent ~= nil and shared.FlightBV.Parent ~= nil) then
+                        shared.AngularVC.Parent = nil;
+                        shared.FlightGyro.Parent = nil;
+                        shared.FlightBV.Parent = nil;
+                        getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false;
+                    end
                 end)
             end)
         end
@@ -957,7 +973,7 @@ run(function()
 
     local SelectIsland = Tabs.Teleports:AddDropdown("Island", {
         Title = "Select Islands to Teleport",
-        Values = shared.YuriTables.Table.Island,
+        Values = shared.tables.Table.Island,
         Multi = false,
         Default = 1,
     })
@@ -984,7 +1000,7 @@ run(function()
         Title = "Unlock All Island",
         Description = "",
         Callback = function()
-            for _,index in next, shared.YuriTables.Table.Island do
+            for _,index in next, shared.tables.Table.Island do
                 for i,v in pairs(workspace.islandUnlockParts[index]:GetChildren()) do
                     if v.Name == "TouchInterest" and v.Parent then
                         FireTouchPart(v.Parent)
@@ -995,7 +1011,7 @@ run(function()
     })
     
     local SelectKarmaType = Tabs.Teleports:AddDropdown("Karma", {
-        Title = "Select Karma",
+        Title = "Select Karma Type",
         Values = {"Evil","Light"},
         Multi = false,
         Default = 1,
@@ -1074,7 +1090,7 @@ run(function()
 
     local TeleportEgg = Tabs.Eggs:AddDropdown("Eggss", {
         Title = "Select To Teleport",
-        Values = shared.YuriTables.Table.Crystal,
+        Values = shared.tables.Table.Crystal,
         Multi = false,
         Default = 1,
     })
@@ -1095,7 +1111,7 @@ run(function()
     
     local Eggs = Tabs.Eggs:AddDropdown("Eggs", {
         Title = "Select Egg",
-        Values = shared.YuriTables.Table.Crystal,
+        Values = shared.tables.Table.Crystal,
         Multi = false,
         Default = 1,
     })
@@ -1120,8 +1136,10 @@ run(function()
         Title = "Toggle Popups",
         Description = "",
         Callback = function()
-            PlayerGui.statEffectsGui.Enabled = not PlayerGui.statEffectsGui.Enabled
-            PlayerGui.hoopGui.Enabled = not PlayerGui.hoopGui.Enabled
+            run(function()
+                PlayerGui.statEffectsGui.Enabled = not PlayerGui.statEffectsGui.Enabled
+                PlayerGui.hoopGui.Enabled = not PlayerGui.hoopGui.Enabled
+            end)
         end
     })
 
@@ -1155,9 +1173,9 @@ run(function()
 
     Tabs.Misc:AddButton({
         Title = "get max jump",
-        Description = "50",
+        Description = "this update(11/23/2024)max jump is 50",
         Callback = function()
-            lp:FindFirstChild("multiJumpCount").Value = 50
+            lp:FindFirstChild("multiJumpCount").Value = 9e9
         end
     })
 
@@ -1168,7 +1186,6 @@ run(function()
             for _,v in pairs(workspace.jumpPads:GetChildren()) do
                 if v.Name == "JumpPad" then
                     FireTouchPart(v.touchPart)
-                    wait()
                 end
             end
         end
@@ -1228,7 +1245,7 @@ LPH_JIT_MAX(function()
                 if lp.Character then
                     local Humanoid = lp.Character.Humanoid
                     local get_sword = GetSword()
-                    if get_sword ~= nil then
+                    if (get_sword ~= nil and get_sword.Parent ~= nil) then
                         if get_sword.Parent == lp.Character then
                             task.spawn(function()
                                 get_sword:Activate()
@@ -1250,7 +1267,7 @@ LPH_JIT_MAX(function()
             if Script.Boss.KillBoss then
                 for i,v in pairs(workspace.bossFolder:GetChildren()) do
                     if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid") then
-                        gethumanoidrootpart().CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0,5,3)
+                        gethumanoidrootpart().CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0,math.random(5),math.random(3))
                         wait()
                     end
                 end
@@ -1313,7 +1330,7 @@ LPH_JIT_MAX(function()
                         TweenService:Create(bodyVelocity, tweenInfo, { Velocity = velocity * Script.Players.FlySpeed * 45 }):Play()
                         bodyVelocity.Parent = primaryPart
             
-                        if not fling then
+                        if not getgenv().fling then
                             TweenService:Create(bodyGyro, tweenInfo, { CFrame = camCFrame.Rotation }):Play()
                             bodyGyro.Parent = primaryPart
                         end
@@ -1324,7 +1341,7 @@ LPH_JIT_MAX(function()
             if Script.Boss.InstantBoss then
                 if sethidden then
                     for i,v in pairs(workspace.bossFolder:GetChildren()) do
-                        if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") then
+                        if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid") then
                             v.Humanoid:ChangeState(15)
                             v.Humanoid.Health = die
                             v.Humanoid.Health = 0
@@ -1333,7 +1350,7 @@ LPH_JIT_MAX(function()
                     end
                 else
                     for i,v in pairs(workspace.bossFolder:GetChildren()) do
-                        if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") then
+                        if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid") then
                             v.Humanoid:ChangeState(15)
                             v.Humanoid.Health = die
                             v.Humanoid.Health = 0
@@ -1345,7 +1362,7 @@ LPH_JIT_MAX(function()
             if Script.Boss.InstantAllBoss then
                 if sethidden then
                     for _,v in pairs(workspace.bossFolder:GetChildren()) do
-                        if v:isA("Model") and v:FindFirstChild("HumanoidRootPart") then
+                        if v:isA("Model") and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid") then
                             v.Humanoid:ChangeState(15)
                             v.Humanoid.Health = die
                             v.Humanoid.Health = 0
@@ -1445,18 +1462,18 @@ LPH_JIT_MAX(function()
             end
 
             if Script.Players.IsSpectator then
-                repeat wait(.1)
+                repeat wait()
                     Camera.CameraSubject = Players:FindFirstChild(Script.Players.SelectPlayers).Character:FindFirstChildOfClass("Humanoid")
                 until not Players:FindFirstChild(Script.Players.SelectPlayers) or not Script.Players.IsSpectator
-                run(function()
-                    Camera.CameraSubject = lp.Character:FindFirstChildOfClass("Humanoid")
-                end)
+                Camera.CameraSubject = lp.Character:FindFirstChildOfClass("Humanoid")
+                wait()
             end
     
             if Script.Players.TeleportPlayers then
-                repeat wait(.1)
+                repeat wait()
                     gethumanoidrootpart().CFrame = Players:FindFirstChild(Script.Players.SelectPlayers).Character.HumanoidRootPart.CFrame * CFrame.new(0,0,5)
                 until not Players:FindFirstChild(Script.Players.SelectPlayers) or Script.Players.TeleportPlayers == false or not Script.Players.TeleportPlayers
+                wait()
             end
 
         end)
@@ -1503,10 +1520,10 @@ LPH_NO_VIRTUALIZE(function()
 		RunService.Stepped:Connect(function()
             pcall(function()
                 if Script.Main.Chi or Script.Boss.KillBoss then
-                    if syn then
+                    if syn and syn.request then
                         setfflag("HumanoidParallelRemoveNoPhysics", "False")
                         setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
-                        game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+                        game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(11)
                         if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
                             game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
                         end
@@ -1544,16 +1561,18 @@ LPH_NO_VIRTUALIZE(function()
                         end
                     end
                 else
-                    if not Script.Main.Chi or not Script.Boss.KillBoss then
-                        if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
-                            game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity):Destroy();
-                            wait()
+                    run(function()
+                        if not Script.Main.Chi or not Script.Boss.KillBoss then
+                            if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
+                                game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity):Destroy();
+                                wait()
+                            end
+                            if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand ~= false then
+                                game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand = false
+                                wait()
+                            end
                         end
-                        if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand ~= false then
-                            game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand = false
-                            wait()
-                        end
-                    end
+                    end)
                 end
             end)
         end)
@@ -1583,8 +1602,8 @@ end)()
 -- remove ads
 LPH_NO_VIRTUALIZE(function()
 	run(function()
-        if game:GetService("Players").LocalPlayer.adsAllowed.Value ~= false then
-            game:GetService("Players").LocalPlayer.adsAllowed.Value = false
+        if lp:WaitForChild("adsAllowed").Value ~= false then
+            lp:WaitForChild("adsAllowed").Value = false
         end
     end)
 end)()
