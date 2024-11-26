@@ -388,21 +388,24 @@ local function FireTouchPart(Part: BasePart)
 
 	local Root = gethumanoidrootpart()
 
-	if firetouchinterest then
-        if not IsOnMobile and executor_used ~= FineExecutors then
-            firetouchinterest(Root, Part, 0)
-            task.wait()
-            firetouchinterest(Root, Part, 1)
-        elseif executor_used == FineExecutors then
-            firetouchinterest(Root, Part, 1)
-            task.wait(.1)
-        else
-            firetouchinterest(Root, Part, 0)
-            task.wait()
-            firetouchinterest(Root, Part, 1)
-        end
+    if firetouchinterest and not IsOnMobile and executor_used ~= "Forlorn" or executor_used ~= "Solara" 
+    then
+        firetouchinterest(Root, Part, 0)
+        task.wait()
+        firetouchinterest(Root, Part, 1)
+    elseif firetouchinterest and IsOnMobile
+    then
+        firetouchinterest(Root, Part, 0)
+        task.wait()
+        firetouchinterest(Root, Part, 1)
+    elseif firetouchinterest and executor_used == "Forlorn" or executor_used == "Solara"
+    then
+        firetouchinterest(Root, Part, 1)
+        task.wait()
+    elseif executor_used == "Xeno" then
+        game.Players.LocalPlayer:Kick("Please using other better experience 😢") -- xeno is sick
     else
-        return("Failed to firetouchinterest / Missing FireTouchInterest")
+        return print("something is error wtih firetouchinterest(function)")
     end
 end
 
@@ -899,12 +902,10 @@ run(function()
             else
                 run(function()
                     pcall(function()
-                        if (shared.AngularVC.Parent ~= nil and shared.FlightGyro.Parent ~= nil and shared.FlightBV.Parent ~= nil) then
-                            shared.AngularVC.Parent = nil;
-                            shared.FlightGyro.Parent = nil;
-                            shared.FlightBV.Parent = nil;
-                            getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false;
-                        end
+                        shared.AngularVC.Parent = nil;
+                        shared.FlightGyro.Parent = nil;
+                        shared.FlightBV.Parent = nil;
+                        getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false;
                     end)
                 end)
             end
@@ -925,12 +926,10 @@ run(function()
         else
             run(function()
                 pcall(function()
-                    if (shared.AngularVC.Parent ~= nil and shared.FlightGyro.Parent ~= nil and shared.FlightBV.Parent ~= nil) then
-                        shared.AngularVC.Parent = nil;
-                        shared.FlightGyro.Parent = nil;
-                        shared.FlightBV.Parent = nil;
-                        getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false;
-                    end
+                    shared.AngularVC.Parent = nil;
+                    shared.FlightGyro.Parent = nil;
+                    shared.FlightBV.Parent = nil;
+                    getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false;
                 end)
             end)
         end

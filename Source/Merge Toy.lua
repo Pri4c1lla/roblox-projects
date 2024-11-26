@@ -1,51 +1,68 @@
--- in development..... wait for rewrite
+local function AuthTimes()
+    if getgenv().AuthTime ~= nil then
+        return getgenv().AuthTime
+    else
+        return tick()
+    end
+end
 
-local LoadingTime = getgenv().AuthTime or tick()
+local LoadingTime = AuthTimes()
+
+if getgenv().Shion_Loaded and not shared.Shion_Debug then
+    return
+end
+
+pcall(function() getgenv().Shion_Loaded = true end)
 
 local function run(func) func() end
 
 -- wait for load
 run(function()
-
-    repeat wait() until game:IsLoaded()
-    repeat wait() until game.Players
-    repeat wait() until game.Players.LocalPlayer
-    repeat wait() until game:GetService("ReplicatedStorage")
-    repeat wait() until game:GetService("Players").LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-    repeat wait() until game:GetService("Players")
+	repeat
+		wait()
+	until game:IsLoaded()
+	repeat
+		wait()
+	until game.Players
+	repeat
+		wait()
+	until game.Players.LocalPlayer
+	repeat
+		wait()
+	until game:GetService("ReplicatedStorage")
+	repeat
+		wait()
+	until game:GetService("Players")
+	repeat
+		wait()
+	until game:GetService("Players").LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
 
 end)
-
-function randomString()
-	local length = math.random(16,30)
-	local array = {}
-	for i = 1, length do
-		array[i] = string.char(math.random(32, 126))
-	end
-	return table.concat(array)
-end
 
 --// Var
 local MainThread = loadstring(game:HttpGet("https://raw.githubusercontent.com/Milkytillys/Megumint-Utilities/refs/heads/main/ThreadLooper.lua"))()
 shared.CreateThered = MainThread.new()
+
 local Players = game:GetService("Players")
 local workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local VirtualUser = game:GetService("VirtualUser")
-local VirtualInputManager = game:GetService("VirtualInputManager")
 local PlayerGui = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
+local Lighting = game:GetService("Lighting")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
 
 local lp = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
 local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
 local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 local getMouse = Players.LocalPlayer:GetMouse()
 local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
+local executor_used = tostring(identifyexecutor())
 
 -- Marco Luraph
-
 if not LPH_OBFUSCATED then
     LPH_JIT_MAX = (function(...) return ... end)
     LPH_JIT = (function(...) return ... end)
@@ -54,7 +71,6 @@ if not LPH_OBFUSCATED then
 end
 
 -- random shit
-
 local NotificationLoad = loadstring(game:HttpGet(('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua'),true))()
 
 shared.Theme = {
@@ -68,31 +84,22 @@ shared.Theme = {
 	}
 }
 
-function random(min, max)
-	return math.random(min, max)
+function random(x, e)
+	return math.random(x, e)
 end;
 
 local random_index = random(1, #shared.Theme.Table)
 
-local float
-float = false
-
-shared.Yurikusa = {
-    Main = {
-        ["Velocity"] = randomString(),
-        ["Folder"] = randomString()
-    }
+--// Utility function or shity function i make.
+local FineExecutors = {
+    "Xeno", -- firetouchinterest is broken.
+    "Forlorn", -- syn x remake. alot of crash and firetouchinterest is broken too. | ลาว(กาก)เหมือนกับ xeno
+    "Solara" -- less crash. better than Syn x Remake, Xeno
 }
 
 run(function()
-    if not workspace:FindFirstChild(shared.Yurikusa.Main.Folder) then
-        local Pri4cillT1x = Instance.new("Folder")
-        Pri4cillT1x.Name = shared.Yurikusa.Main.Folder
-        Pri4cillT1x.Parent = workspace
-    end
+    warn("Your Executor is "..executor_used)
 end)
-
---// Utility function or shity function i make.
 
 local function getchar()
     return lp.Character or lp.CharacterAdded:Wait()
@@ -102,7 +109,7 @@ local function gethumanoidrootpart()
     return getchar():FindFirstChild("HumanoidRootPart")
 end
 
---// All Configuration and Table(Main table) Below Here.
+--// All Configuration Below Here.
 
 local MinimizeKey = getgenv().MinimizeKey
 
@@ -121,7 +128,7 @@ shared.SettingUi = {
     ["MinimizeKey"] = shared.Mizekey.MinimizeKey,
 }
 
-shared.Mains = {
+shared.tables = {
     Table = {
         ["Players"] = {},
         ["Weapon"] = {}
@@ -131,13 +138,13 @@ shared.Mains = {
 run(function()
     local success,result = pcall(function()
 
-        for _,v in next, Players:GetPlayers() do
-            table.insert(shared.Mains.Table.Players, v.Name)
+        for i,v in next, Players:GetPlayers() do
+            table.insert(shared.tables.Table.Players, v.Name)
         end
 
         for _,v in pairs(ReplicatedStorage.Weapons:GetChildren()) do
             if v:IsA("Tool") then
-                table.insert(shared.Mains.Table.Weapon, v.Name)
+                table.insert(shared.tables.Table.Weapon, v.Name)
             end
         end
 
@@ -145,66 +152,55 @@ run(function()
     if success then
         return
     else
-        print("Error: "..result)
+        return("Error: "..result)
     end
 end)
 
 local Script = {
     Main = {
-        ["Sample"] = false,
-        ["Collect"] = false,
+        ["Drop"] = false,
+        ["Collent"] = false,
         ["Deposit"] = false,
         ["Upgrade"] = false,
         ["Merge"] = false,
         ["Drops"] = false,
-        ["Candy"] = false,
-        ["Defense"] = false
+        ["Candy"] = false
     },
     Misc = {
         ["SelectWeapon"] = {},
+        ["Defense"] = false,
         ["KillAura"] = false,
         ["LoopKill"] = false,
-        ["Killzombies"] = false,
+        ["Killsoldier"] = false,
         ["KillBoss"] = false
     },
     Config = {
         ["Parameter"] = {}
     },
     Players = {
-        ["flight"] = false,
-        ["flightmb"] = false,
         ["IsSpectator"] = false,
-        ["SelectPlayers"] = {},
-        ["FlySpeed"] = {},
         ["TeleportPlayers"] = false,
-        ["SpectatePlayers"] = false,
-        ["JumpValue"] = 50,
-        ["JumpToggle"] = false,
-        ["Noclip"] = false
+        ["SpectatePlayers"] = false
     }
 }
 
+-- load ui
 local MainUi = httprequest({
     Url = "https://raw.githubusercontent.com/SixZensED/Scripts/main/main.lua",
     Method = "GET"
 })
 if MainUi.StatusCode == 200 then
     shared.Fluent = getfenv().loadstring(MainUi.Body)()
-    print(shared.Fluent)
 end
 
---// Addon function not in Main
-
-local function FireTouchPart(Part: BasePart) -- local function FireTouchPart(Part: BasePart). fuck you 
+--// Addon function
+local function FireTouchPart(Part: BasePart)
 	local TouchTransmitter = Part:FindFirstChildOfClass("TouchTransmitter")
 	if not TouchTransmitter then return end
 
 	local Root = gethumanoidrootpart()
 
-	if firetouchinterest and not IsOnMobile then
-        firetouchinterest(Root, Part, 1)
-        wait()
-    elseif firetouchinterest and IsOnMobile then
+	if firetouchinterest then
         firetouchinterest(Root, Part, 0)
         wait()
         firetouchinterest(Root, Part, 1)
@@ -223,7 +219,7 @@ local function GetTycoon()
     end
 end
 
-local function TReturnV()
+local function ReturnToolNames()
     for i,v in ipairs(lp.Backpack:GetChildren()) do
         if v:IsA("Tool") and v:FindFirstChild("Handle") and v.Name == Script.Misc.SelectWeapon then
             return v
@@ -237,11 +233,11 @@ local function TReturnV()
     return nil
 end
 
-local function Equip_()
+local function EquipTools()
     if getchar() ~= nil then
         local Humanoid = getchar().Humanoid
-        local ReturnedValue = TReturnV()
-        if ReturnedValue ~= nil then
+        local ReturnedValue = ReturnToolNames()
+        if (ReturnedValue ~= nil and ReturnedValue.Parent ~= nil) then
             if ReturnedValue.Parent == getchar() then
                 ReturnedValue:Activate()
                 ReturnedValue:Deactivate()
@@ -252,7 +248,7 @@ local function Equip_()
     end
 end
 
-local requirename = GetTycoon()
+shared.Tycoon = GetTycoon()
 
 --! UI Initializer
 
@@ -278,12 +274,12 @@ run(function()
 
     local Tabs = shared.Tabs -- i just lazy to change Tabs to shared.Tabs.
 
-    local Sample = Tabs.Main:AddToggle("", {Title = "Get Sample", Default = false })
-    Sample:OnChanged(function(v)
-        Script.Main.Sample = v
+    local Drop = Tabs.Main:AddToggle("", {Title = "Get Drop", Default = false })
+    Drop:OnChanged(function(v)
+        Script.Main.Drop = v
     end)
 
-    local Collect = Tabs.Main:AddToggle("", {Title = "Auto Collect Sample", Default = false })
+    local Collect = Tabs.Main:AddToggle("", {Title = "Auto Collect Parts", Default = false })
     Collect:OnChanged(function(v)
         Script.Main.Collect = v
     end)
@@ -308,19 +304,9 @@ run(function()
         Script.Main.Drops = v
     end)
 
-    local Candy = Tabs.Main:AddToggle("", {Title = "Collect Candy", Default = false })
-    Candy:OnChanged(function(v)
-        Script.Main.Candy = v
-    end)
-
-    local Defense = Tabs.Main:AddToggle("", {Title = "Auto Defense", Default = false })
-    Defense:OnChanged(function(v)
-        Script.Main.Defense = v
-    end)
-
     local SelectedWeapon = Tabs.Misc:AddDropdown("", {
         Title = "Select Weapon",
-        Values = shared.Mains.Table.Weapon,
+        Values = shared.tables.Table.Weapon,
         Multi = false,
         Default = 1,
     })
@@ -333,7 +319,7 @@ run(function()
 
     local SelectPlr = Tabs.Misc:AddDropdown("SelectedPlyer", {
         Title = "Players",
-        Values = shared.Mains.Table.Players,
+        Values = shared.tables.Table.Players,
         Multi = false,
         Default = 1,
     })
@@ -343,55 +329,65 @@ run(function()
     SelectPlr:OnChanged(function(Value)
         Script.Players.SelectPlayers = Value
     end)
-    
+
     Tabs.Misc:AddButton({
         Title = "Refresh Dropdown",
         Description = "Update Players",
         Callback = function()
             SelectPlr:Clear()
-            wait(.1)
+            task.wait(.1)
             for _,v in next, Players:GetPlayers() do
                 SelectPlr:Add(v.Name)
             end
         end
     })
 
+    local Defense = Tabs.Misc:AddToggle("", {Title = "Auto Defense", Default = false })
+    Defense:OnChanged(function(v)
+        Script.Misc.Defense = v
+        while Script.Misc.Defense do task.wait(.1)
+            pcall(function()
+                EquipTools()
+            end)
+        end
+    end)
+
     local LoopKill = Tabs.Misc:AddToggle("", {Title = "Loop Kill Players", Description = "Select Players First", Default = false })
     LoopKill:OnChanged(function(v)
         Script.Misc.LoopKill = v
         while Script.Misc.LoopKill do task.wait(.1)
             pcall(function()
-                Equip_()
+                EquipTools()
             end)
         end
     end)
 
-    local Killallplr = Tabs.Misc:AddToggle("", {Title = "Loop Kill All Players", Default = false })
+    local Killallplr = Tabs.Misc:AddToggle("", {Title = "Kill All Players", Default = false })
     Killallplr:OnChanged(function(v)
         Script.Misc.KillAura = v
         while Script.Misc.KillAura do task.wait(.1)
             pcall(function()
-                Equip_()
+                EquipTools()
             end)
         end
     end)
-
+    
     local KillBoss = Tabs.Misc:AddToggle("", {Title = "Kill Boss", Default = false })
     KillBoss:OnChanged(function(v)
         Script.Misc.KillBoss = v
         while Script.Misc.KillBoss do task.wait(.1)
             pcall(function()
-                Equip_()
+                EquipTools()
             end)
         end
     end)
 
-    local Killzombies = Tabs.Misc:AddToggle("", {Title = "Loop Kill All Zombies", Default = false })
-    Killzombies:OnChanged(function(v)
-        Script.Misc.Killzombies = v
-        while Script.Misc.Killzombies do task.wait(.1)
+    local Killsoldier = Tabs.Misc:AddToggle("", {Title = "kill all soldier", Default = false })
+    Killsoldier:OnChanged(function(v)
+        Script.Misc.Killsoldier = v
+        while Script.Misc.Killsoldier do task.wait(.1)
             pcall(function()
-                Equip_()
+                EquipTools()
             end)
         end
     end)
@@ -415,8 +411,8 @@ run(function()
     end)
 
     Tabs.Con:AddButton({
-        Title = "Got it",
-        Description = "Very important button",
+        Title = "got it",
+        Description = "...",
         Callback = function()
             getchar():FindFirstChildOfClass('Humanoid'):UnequipTools()
             wait()
@@ -469,18 +465,19 @@ LPH_JIT_MAX(function()
     RunService.Heartbeat:Connect(function()
 
         pcall(function()
-            
-            if Script.Main.Sample then
-                local args = {
-                    [1] = 17, -- specific number
-                    [2] = gethumanoidrootpart().Position * Vector3.new(9e9,9e9,9e9)
+
+            if Script.Main.Drop then
+                local arg = {
+                    [1] = 17,
+                    [2] = gethumanoidrootpart().Position * Vector3.new(1e3,1e3,1e3)
                 }
-                ReplicatedStorage.Signals.RemoteEvents.GetWoolRemote:FireServer(unpack(args))
+                ReplicatedStorage.Signals.RemoteEvents.GetWoolRemote:FireServer(unpack(arg))
             end
 
             if Script.Main.Collect then
-                for _,v in pairs(workspace.Tycoon.Tycoons[requirename].Drops:GetChildren()) do
+                for _,v in pairs(workspace.Tycoon.Tycoons[shared.Tycoon].Drops:GetChildren()) do
                     if v:IsA("Model") then
+                        v.Wool.CanCollide = false
                         v.Wool.CFrame = gethumanoidrootpart().CFrame
                         task.wait()
                     end
@@ -492,97 +489,94 @@ LPH_JIT_MAX(function()
             end
 
             if Script.Main.Upgrade then
-                for _,v in pairs(workspace.Tycoon.Tycoons[requirename]["Buttons_E"].Upgrade.Head:GetChildren()) do
-                    FireTouchPart(v.Parent)
+                for _,v in pairs(workspace.Tycoon.Tycoons[shared.Tycoon]["Buttons_E"].Upgrade.Head:GetChildren()) do
+                    FireTouchPart(v)
                 end
             end
 
             if Script.Main.Merge then
-                for _,v in pairs(workspace.Tycoon.Tycoons[requirename]["Buttons_E"].Merge.Head:GetChildren()) do
-                    FireTouchPart(v.Parent)
+                for _,v in pairs(workspace.Tycoon.Tycoons[shared.Tycoon]["Buttons_E"].Merge.Head:GetChildren()) do
+                    FireTouchPart(v)
                 end
             end
 
             if Script.Main.Drops then
-                for _,v in pairs(workspace:GetChildren()) do
-                    if v.Name == "Money" then
-                        v.CanCollide = false
-                        v.CFrame = gethumanoidrootpart().CFrame
+                for i,v in pairs(workspace:GetChildren()) do
+                    if string.find(v.Name,"Money") then
+                        if v.CanCollide ~= false then v.CanCollide = false end
+                        v.Position = gethumanoidrootpart().Position
                         task.wait()
-                    end
+                     end
                 end
             end
-
-            if Script.Main.Candy then
-                for _,v in pairs(workspace:GetChildren()) do
-                    if v.Name == "Candy_Reward" then
-                        v.CanCollide = false
-                        v.Part.CanCollide = false
-                        v.Part.CFrame = gethumanoidrootpart().CFrame
-                        task.wait()
-                    end
-                end
-            end
-
-            if Script.Main.Defense then
-                --workspace.Tycoon.Tycoons.F.Round.Pistol
-                for _,v in pairs(workspace.Tycoon.Tycoons[requirename].Round:GetChildren()) do
-                    if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildWhichIsA("Humanoid") then
-                        v:FindFirstChildWhichIsA("Humanoid").Health = 0
+--// FIXME: issue on tier 8, 
+            if Script.Misc.Defense then
+                for _,v in pairs(workspace.Tycoon.Tycoons[shared.Tycoon].Round:GetChildren()) do
+                    if v:IsA("Model") then
+                        if v:FindFirstChildWhichIsA("Humanoid") and v:FindFirstChildWhichIsA("Humanoid").Health ~= 0 then
+                            local args = {
+                                [1] = v:FindFirstChildWhichIsA("Humanoid"),
+                                [2] = math.huge
+                            }
+                            getchar()[Script.Misc.SelectWeapon].Remotes.TakeDamage:FireServer(unpack(args))
+                            task.wait()
+                        end
                     end
                 end
             end
 
             if Script.Misc.KillAura then
                 for _,v in next, Players:GetPlayers() do
-                    if v.Name ~= lp.Name then
+                    if v.Name ~= lp.Name and v.Character:FindFirstChildWhichIsA("Humanoid").Health ~= 0 then
                         local args = {
                             [1] = v.Character:FindFirstChildWhichIsA("Humanoid"),
                             [2] = math.huge
                         }
                         getchar()[Script.Misc.SelectWeapon].Remotes.TakeDamage:FireServer(unpack(args))
+                        task.wait()
                     end
                 end
             end
 
             if Script.Misc.LoopKill then
                 for _,v in next, Players:GetPlayers() do
-                    if v.Name == Script.Players.SelectPlayers then
+                    if v.Name == Script.Players.SelectPlayers and v.Character:FindFirstChildWhichIsA("Humanoid").Health ~= 0 then
                         if Script.Players.SelectPlayers == lp.Name then return end -- stop silly user.
                         local args = {
                             [1] = v.Character:FindFirstChildWhichIsA("Humanoid"),
                             [2] = math.huge
                         }
                         getchar()[Script.Misc.SelectWeapon].Remotes.TakeDamage:FireServer(unpack(args))
+                        task.wait()
                     end
                 end
             end
 
+--// TODO: find Boss folder  -- workspace.BigBoss
             if Script.Misc.KillBoss then
-                for i,v in pairs(workspace.Boss:GetChildren()) do
-                    if v:IsA("Model") and v:FindFirstChildOfClass("Humanoid") then
+                for i,v in pairs(workspace:GetChildren()) do
+                    if v:IsA("Model") and v:FindFirstChildOfClass("Humanoid") and v:FindFirstChildOfClass("Humanoid").Health ~= 0 and string.match(v.Name,"BigBoss") then
                         local args = {
                             [1] = v.Humanoid,
                             [2] = math.huge
                         }
                         getchar()[Script.Misc.SelectWeapon].Remotes.TakeDamage:FireServer(unpack(args))
+                        task.wait()
                     end
                 end
             end
 
-            if Script.Misc.Killzombies then
-                for i,v in pairs(workspace.Enemy:GetDescendants()) do -- impossible to use GetChildren. if you use GetDescendants it little bit laging.
-                    if v.Name == "AR" then
-                        if v:FindFirstChildWhichIsA("Humanoid").Health == 0 then return end
-                        if v:FindFirstChildWhichIsA("Humanoid").Health ~= 0 then
-                            local args = {
-                                [1] = v:FindFirstChildWhichIsA("Humanoid"),
-                                [2] = math.huge
-                            }
-                            getchar()[Script.Misc.SelectWeapon].Remotes.TakeDamage:FireServer(unpack(args))
-                        end
+            if Script.Misc.Killsoldier then
+                for _, v in pairs(workspace.Enemy:GetDescendants()) do
+                    if v:IsA("Model") and v:FindFirstChildWhichIsA("Humanoid") and v:FindFirstChildWhichIsA("Humanoid").Health ~= 0 then
+                        local args = {
+                            [1] = v.Humanoid,
+                            [2] = math.huge
+                        }
+                        getchar()[Script.Misc.SelectWeapon].Remotes.TakeDamage:FireServer(unpack(args))
+                        task.wait()
                     end
-                end                
+                end
             end
 
         end)
@@ -590,31 +584,23 @@ LPH_JIT_MAX(function()
 end)()
 
 LPH_NO_VIRTUALIZE(function()
-	run(function()
-		RunService.Heartbeat:Connect(function()
-
-            pcall(function()
-
-                if setscriptable then
-                    setscriptable(game.Players.LocalPlayer, "SimulationRadius", true)
+    run(function()
+        pcall(function()
+            game.Players.LocalPlayer.ChildAdded:Connect(function(child)
+                for _, part in pairs(lp.Character:GetDescendants()) do
+                    local path = part:FindFirstChildOfClass("TouchTransmitter")
+                    if not path then return end
+                    v:Destroy()
                 end
-
-                if sethidden then
-                    sethidden(game.Players.LocalPlayer, "SimulationRadius", math.huge)
-                end
-
             end)
-
-		end)
-	end)
+        end)
+    end)
 end)()
 
 -- for config~
 LPH_NO_VIRTUALIZE(function()
     run(function()
         pcall(function()
-
-            warn("anti afk : Is fine")
 
             NotificationLoad:NewNotification({
                 ["Mode"] = "info",
@@ -624,11 +610,10 @@ LPH_NO_VIRTUALIZE(function()
                 ["Audio"] = false
             })
             
+            local getconnect = getconnections or get_signal_cons
 
-            local GC = getconnections or get_signal_cons
-
-            if GC then
-                for i,v in pairs(GC(lp.Idled)) do
+            if getconnect then
+                for i,v in pairs(getconnect(lp.Idled)) do
                     if v["Disable"] then
                         v["Disable"](v)
                     elseif v["Disconnect"] then
@@ -638,9 +623,9 @@ LPH_NO_VIRTUALIZE(function()
             else
                 lp.Idled:Connect(function()
                     VirtualUser:CaptureController()
-                    VirtualUser:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+                    VirtualUser:Button2Down(Vector2.new(0,0),Camera.CFrame)
                     wait(1)
-                    VirtualUser:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+                    VirtualUser:Button2Up(Vector2.new(0,0),Camera.CFrame)
                 end)
             end
 
