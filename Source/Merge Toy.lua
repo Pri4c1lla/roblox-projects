@@ -583,20 +583,6 @@ LPH_JIT_MAX(function()
     end)
 end)()
 
-LPH_NO_VIRTUALIZE(function()
-    run(function()
-        pcall(function()
-            game.Players.LocalPlayer.ChildAdded:Connect(function(child)
-                for _, part in pairs(lp.Character:GetDescendants()) do
-                    local path = part:FindFirstChildOfClass("TouchTransmitter")
-                    if not path then return end
-                    v:Destroy()
-                end
-            end)
-        end)
-    end)
-end)()
-
 -- for config~
 LPH_NO_VIRTUALIZE(function()
     run(function()
