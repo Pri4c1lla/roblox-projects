@@ -403,7 +403,7 @@ local function FireTouchPart(Part: BasePart)
         firetouchinterest(Root, Part, 1)
         task.wait()
     elseif executor_used == "Xeno" then
-        game.Players.LocalPlayer:Kick("Please using other better experience 😢") -- xeno is sick
+        game.Players.LocalPlayer:Kick("Please using other executor better experience 😢") -- xeno is sick
     else
         return print("something is error wtih firetouchinterest(function)")
     end
