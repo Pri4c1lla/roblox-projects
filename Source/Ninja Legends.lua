@@ -1,17 +1,3 @@
---[[
-https://raw.githubusercontent.com/Pri4c1lla/Storage/refs/heads/main/Source/Ninja%20Legends.lua
-                                                     
-              ,--.  ,---.       ,--.,--.,--.         
- ,---. ,--.--.`--' /    | ,---./   ||  ||  | ,--,--. 
-| .-. ||  .--',--./  '  || .--'`|  ||  ||  |' ,-.  | 
-| '-' '|  |   |  |'--|  |\ `--. |  ||  ||  |\ '-'  | 
-|  |-' `--'   `--'   `--' `---' `--'`--'`--' `--`--' 
-`--'                                                 
-
-💕 (ห้ามเอาไปขาย หรือ obf / obfuscate)
-
-]]
-
 local function AuthTimes()
     if getgenv().AuthTime ~= nil then
         return getgenv().AuthTime
@@ -81,6 +67,7 @@ shared.CreateThered = MainThread.new()
 local Players = game:GetService("Players")
 local workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local MarketplaceService = game:GetService("MarketplaceService")
 local VirtualUser = game:GetService("VirtualUser")
 local PlayerGui = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
 local Lighting = game:GetService("Lighting")
@@ -405,7 +392,7 @@ local function FireTouchPart(Part: BasePart)
     elseif executor_used == "Xeno" then
         game.Players.LocalPlayer:Kick("Please using other executor better experience 😢") -- xeno is sick
     else
-        return print("something is error wtih firetouchinterest(function)")
+        return print("something is error with firetouchinterest(function)")
     end
 end
 
@@ -464,14 +451,16 @@ local function EquipShuriken()
     return nil
 end
 
+local GameInfo = MarketplaceService:GetProductInfo(game.PlaceId)
+
 --! UI Initializer
 run(function()
     local Fluent = shared.Fluent
     local Options = Fluent.Options
 
     local Window = Fluent:CreateWindow({
-        Title = "ninja Legends | 11/20/2024",
-        SubTitle = "By Shion",
+        Title = `{GameInfo.Name}`,
+        SubTitle = `By github.com/Pri4c1lla/roblox-projects`,
         TabWidth = shared.SettingUi.TabWidth,
         Size = UDim2.fromOffset(table.unpack(shared.SettingUi.Size)),
         Theme = shared.SettingUi.Theme,
