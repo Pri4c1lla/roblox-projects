@@ -1,314 +1,142 @@
-local function AuthTimes()
-    if getgenv().AuthTime ~= nil then
-        return getgenv().AuthTime
-    else
-        return tick()
-    end
-end
-
-local LoadingTime = AuthTimes()
-
-if getgenv().Shion_Loaded and not shared.Shion_Debug then
-    return
-end
-
-pcall(function() getgenv().Shion_Loaded = true end)
-
+local LoadingTime;
+local env = (getgenv or getfenv or getrenv)() or shared
+if getgenv().AuthTime ~= nil then LoadingTime = getgenv().AuthTime else LoadingTime = tick() end
 local function run(func) func() end
+run(function()if env.Shion_Loaded and not env.Shion_Debug then return end end) -- If you're developer then, Remove this line.
+run(function()repeat wait()until game:IsLoaded()repeat wait()until game.Players;repeat wait()until game.Players.LocalPlayer;repeat wait()until game:GetService("ReplicatedStorage")repeat wait()until game:GetService("Players")repeat wait()until game:GetService("Players").LocalPlayer:FindFirstChildWhichIsA("PlayerGui")end)
+run(function() pcall(function() env.Shion_Loaded = true end) end)
 
--- wait for load
-run(function()
-	repeat
-		wait()
-	until game:IsLoaded()
-	repeat
-		wait()
-	until game.Players
-	repeat
-		wait()
-	until game.Players.LocalPlayer
-	repeat
-		wait()
-	until game:GetService("ReplicatedStorage")
-	repeat
-		wait()
-	until game:GetService("Players")
-	repeat
-		wait()
-	until game:GetService("Players").LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
+-- cloneref support for shitty versions of it
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Babyhamsta/RBLX_Scripts/main/Universal/CloneRef.lua", true))();
 
-end)
+local cloneref = cloneref or function(...) return ... end
 
-function randomString()
-	local length = math.random(16,30)
-	local array = {}
-	for i = 1, length do
-		array[i] = string.char(math.random(32, 126))
-	end
-	return table.concat(array)
-end
-
---[[
-function randomStr()
-    local str = ""
-    for _ = 1, math.random(8,15) do
-        str = str..string.char(math.random(97,122))
-    end
-    return str
-end
-]]
-
---// Var
-local MainThread = loadstring(game:HttpGet("https://raw.githubusercontent.com/Milkytillys/Megumint-Utilities/refs/heads/main/ThreadLooper.lua"))()
-shared.CreateThered = MainThread.new()
-
---local cloneref = cloneref or function(...) return ... end
-
-local Players = game:GetService("Players")
-local workspace = game:GetService("Workspace")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local MarketplaceService = game:GetService("MarketplaceService")
-local VirtualUser = game:GetService("VirtualUser")
+--// GetService , Variables
+local Workspace = cloneref(game:GetService("Workspace"))
+local workspace = Workspace
+local Players = cloneref(game:GetService("Players"))
+local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
+local VirtualUser = cloneref(game:GetService("VirtualUser"))
 local PlayerGui = Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui")
-local Lighting = game:GetService("Lighting")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local TweenService = game:GetService("TweenService")
+local RunService = cloneref(game:GetService("RunService"))
+local UserInputService = cloneref(game:GetService("UserInputService"))
+local TweenService = cloneref(game:GetService("TweenService"))
+local MarketplaceService = cloneref(game:GetService("MarketplaceService"))
 
-local lp = Players.LocalPlayer
-local Camera = workspace.CurrentCamera
 local httprequest = (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
 local sethidden = sethiddenproperty or set_hidden_property or set_hidden_prop
-local gethidden = gethiddenproperty or get_hidden_property or get_hidden_prop
 local getMouse = Players.LocalPlayer:GetMouse()
-local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
-local executor_used = tostring(identifyexecutor())
 
--- Marco Luraph
-if not LPH_OBFUSCATED then
-    LPH_JIT_MAX = (function(...) return ... end)
-    LPH_JIT = (function(...) return ... end)
-    LPH_NO_VIRTUALIZE = (function(...) return ... end)
-    LPH_NO_UPVALUES = (function(...) return ... end) -- from hookmetamethod or upvalue function
-end
-
--- random shit
+local MainThread = loadstring(game:HttpGet("https://github.com/Pri4c1lla/roblox-projects/raw/main/Assets/ThreadLooper.lua"))()
+env.CreateThered = MainThread.new()
 
 local NotificationLoad = loadstring(game:HttpGet(('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua'),true))()
 
-shared.Theme = {
-	Table = {
-		"Dark",
-		"Light",
-		"Darker",
-		"Rose",
-		"Aqua",
-		"Amethyst"
-	}
-}
+--// local
+local lp = Players.LocalPlayer
+local LocalPlayer = game.Players.LocalPlayer
+local rs = ReplicatedStorage
+local IsOnMobile = table.find({Enum.Platform.IOS, Enum.Platform.Android}, UserInputService:GetPlatform())
+local executor_used = tostring(identifyexecutor()) -- random
 
-function random(min, max)
-	return math.random(min, max)
-end;
+local GameInfo = MarketplaceService:GetProductInfo(game.PlaceId)
 
-local random_index = random(1, #shared.Theme.Table)
-
-local float
-float = false
-
-local infJump
-infJumpDebounce = false
-
-local noclipDefaults = {}
-local movers = {}
-
-local AreaCFrame = {
-    [1] = CFrame.new(-119.522469, 13002.2637, 274.569244, 0.342042685, -0, -0.939684391, 0, 1, -0, 0.939684391, 0, 0.342042685), -- Evil 100
-    [2] = CFrame.new(354.477539, 8874.26367, 116.569244, 0.342042685, -0, -0.939684391, 0, 1, -0, 0.939684391, 0, 0.342042685), -- Light 100
-    [3] = CFrame.new(330.127533, 16921.8223, -16.1307545, 0.342042685, -0, -0.939684391, 0, 1, -0, 0.939684391, 0, 0.342042685), -- Evil 250
-    [4] = CFrame.new(1848.47754, 82.2061615, -137.430756, 0.342042685, -0, -0.939684391, 0, 1, -0, 0.939684391, 0, 0.342042685), -- Light 1000
-    [5] = CFrame.new(627.358643, 82.2061615, 2429.48657, -0.422592998, 0, -0.906319618, 0, 1, 0, 0.906319618, 0, -0.422592998), -- Evil 2000
-    [6] = CFrame.new(330.127533, 30432.8242, -16.1307545, 0.342042685, -0, -0.939684391, 0, 1, -0, 0.939684391, 0, 0.342042685), -- Light 2000
-    [7] = CFrame.new(1875.96692, 82.2061615, -6806.41016, 0.965929627, -0, -0.258804798, 0, 1, -0, 0.258804798, 0, 0.965929627), -- Evil 5000
-    [8] = CFrame.new(5041.17725, 82.2061615, 1614.74866, 0.258864343, -0, -0.965913713, 0, 1, -0, 0.965913713, 0, 0.258864343), -- Light 5000
-}
-
--- จริงๆ ไม่ต้องใช้ loadstring นอกก็ได้ (ก็เพิ่งจะนึกได้ 5555555)
-local Element = loadstring(game:HttpGet("https://gist.githubusercontent.com/Pri4c1lla/ed34be9357bddcb2b28c6513c5621941/raw/ac26ebcc81d55b005845860079a0a7fb12f2101d/Element.lua"))()
-
-shared.Yurikusa = {
-    Main = {
-        ["Velocity"] = "Shion_"..randomString(),
-        ["Folder"] = "Shion_"..randomString()
-    }
-}
+-- random string
+local charset = {}
 
 run(function()
-    if not workspace:FindFirstChild(shared.Yurikusa.Main.Folder) then
-        local Pri4cillT1x = Instance.new("Folder",workspace)
-        Pri4cillT1x.Name = shared.Yurikusa.Main.Folder
-        shared.Folder = Pri4cillT1x
-    end
+    for i = 48,  57 do table.insert(charset, string.char(i)) end;
+    for i = 65,  90 do table.insert(charset, string.char(i)) end;
+    for i = 97, 122 do table.insert(charset, string.char(i)) end;
 end)
 
---// Utility function or shity function i make.
-local FineExecutors = {
-    "Xeno", -- firetouchinterest is broken.
-    "Forlorn", -- syn x remake. alot of crash and firetouchinterest is broken too. | ลาว(กาก)เหมือนกับ xeno
-    "Solara" -- less crash. better than Syn x Remake, Xeno
-}
-
-run(function()
-    warn("Your Executor is "..executor_used)
-end)
-
-local function getchar()
-    return lp.Character or lp.CharacterAdded:Wait()
-end
-
-local function gethumanoidrootpart()
-    return getchar():FindFirstChild("HumanoidRootPart")
-end
-
-function r15(plr) -- if (players) is R15 will return true if not then return false
-	if plr.Character:FindFirstChildOfClass('Humanoid').RigType == Enum.HumanoidRigType.R15 then
-		return true
-	end
-end
-
-local function Floating()
-    float = true
-    local Char = getchar()
-    local floatName = randomString()
-    if float and not Char:FindFirstChild(floatName) then
-        task.spawn(function()
-			local Float = Instance.new('Part')
-			Float.Name = floatName
-			Float.Parent = Char
-			Float.Transparency = 1
-            if not r15(lp) then
-                Float.Size = Vector3.new(25,0.1,25)
-            else
-                Float.Size = Vector3.new(25,0.2,25)
-            end
-			Float.Anchored = true
-			local FloatValue = -3.1
-			Float.CFrame = gethumanoidrootpart().CFrame * CFrame.new(0,FloatValue,0)
-            qUp = getMouse.KeyUp:Connect(function(KEY)
-				if KEY == 'q' then
-					FloatValue = FloatValue + 0.5
-				end
-			end)
-			eUp = getMouse.KeyUp:Connect(function(KEY)
-				if KEY == 'e' then
-					FloatValue = FloatValue - 0.5
-				end
-			end)
-			qDown = getMouse.KeyDown:Connect(function(KEY)
-				if KEY == 'q' then
-					FloatValue = FloatValue - 0.5
-				end
-			end)
-			eDown = getMouse.KeyDown:Connect(function(KEY)
-				if KEY == 'e' then
-					FloatValue = FloatValue + 0.5
-				end
-			end)
-            floatDied = lp.Character:FindFirstChildOfClass('Humanoid').Died:Connect(function()
-                Float:Destroy()
-                qUp:Disconnect()
-                eUp:Disconnect()
-                qDown:Disconnect()
-                eDown:Disconnect()
-                floatDied:Disconnect()
-            end)
-            if float and Char:FindFirstChild(floatName) then
-                repeat task.wait()
-                    pcall(function()
-                        Float.CFrame = gethumanoidrootpart().CFrame * CFrame.new(0,FloatValue,0)
-                        for _,child in pairs(lp.Character:GetDescendants()) do
-                            if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
-                                child.CanCollide = false
-                            end
-                        end
-                    end)
-                until not float or not lp.Character:FindFirstChildOfClass("Humanoid") or lp.Character.Humanoid.Health <= 0
-                Float:Destroy()
-            end
-        end)
+--// RandomCharacters(math.random(...)) << to use this func
+local function RandomCharacters(length)
+    if length > 0 then
+        return RandomCharacters(length - 1) .. charset[math.random(1, #charset)]
+    else
+        return ""
     end
 end
 
---// All Configuration Below Here.
+local MinimizeKey = env.MinimizeKey or env.MinimizeKey
 
-local MinimizeKey = getgenv().MinimizeKey
-
-shared.Mizekey = {
+env.Mizekey = {
     ["MinimizeKey"] = MinimizeKey or Enum.KeyCode.RightShift
 }
 
-shared.SettingUi = {};
-
-shared.SettingUi = {
-    ["TabWidth"] = 160,
-    ["Size"] = { 580, 460 },
-    ["Theme"] = random_index,
-    ["Acrylic"] = true,
-    ["Transparency"] = true,
-    ["MinimizeKey"] = shared.Mizekey.MinimizeKey,
-}
-
-shared.tables = {
+--[[
+shared.Theme = {
     Table = {
-        ["Players"] = {},
-        ["Shop"] = {},
-        ["Island"] = {},
-        ["Crystal"] = {},
-        ["SellArea"] = {},
-        ["Boss"] = {},
-        ["Ranks"] = {}
+        "Dark",
+        "Light",
+        "Darker",
+        "Rose",
+        "Aqua",
+        "Amethyst"
     }
 }
+--math.random(1, #shared.Theme.Table)
+]]
 
-run(function()
-    local success,result = pcall(function()
+env.SettingUi = {}; env.SettingUi = {
+    ["TabWidth"] = 160,
+    ["Size"] = { 580, 460 },
+    ["Theme"] = "Darker",
+    ["Acrylic"] = true,
+    ["Transparency"] = true,
+    ["MinimizeKey"] = env.Mizekey.MinimizeKey,
+}
 
-        for i,v in next, Players:GetPlayers() do
-            table.insert(shared.tables.Table.Players, v.Name)
-        end
+local function getchar()
+    return Players.LocalPlayer.Character or Players.LocalPlayer.CharacterAdded:Wait()
+end
 
-        for i,v in pairs(workspace:FindFirstChild("islandUnlockParts"):GetChildren()) do
-            table.insert(shared.tables.Table.Island, v.Name)
-        end
+local function HumanoidRootPart()
+    return getchar():FindFirstChild("HumanoidRootPart",3)
+end
 
-        for i,v in pairs(workspace.mapCrystalsFolder:GetChildren()) do
-            table.insert(shared.tables.Table.Crystal, v.Name)
-        end
+local function FireTouchPart(Part: BasePart)
+	local TouchTransmitter = Part:FindFirstChildOfClass("TouchTransmitter")
+	if not TouchTransmitter then return end
 
-        for i,v in pairs(workspace.sellAreaCircles:GetChildren()) do
-            table.insert(shared.tables.Table.SellArea, v.Name)
-        end
+	local Root = HumanoidRootPart()
 
-        for i,v in pairs(workspace.shopAreaCircles:GetChildren()) do
-            table.insert(shared.tables.Table.Shop, v.Name)
-        end
-
-        for i,v in pairs(workspace.bossFolder:GetChildren()) do
-            table.insert(shared.tables.Table.Boss, v.Name)
-        end
-
-        for i,v in pairs(ReplicatedStorage.Ranks.Ground:GetChildren()) do
-            table.insert(shared.tables.Table.Ranks, v.Name)
-        end
-
-    end)
-    if success then
-        return
+    if firetouchinterest
+    then
+        firetouchinterest(Root, Part, 0)
+        task.wait()
+        firetouchinterest(Root, Part, 1)
     else
-        return("Error: "..result)
+        return print("something is error with firetouchinterest(function)")
+    end
+end
+
+local function IsAlive()
+    if LocalPlayer.Character.Humanoid.Health > 0 and LocalPlayer.Character:FindFirstChild("Humanoid") and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        return true
+    else
+        return false
+    end
+end
+
+-- Noclip Stuff and Flight func
+local noclipDefaults = {}
+local movers = {}
+
+local Fluent = nil
+run(function()
+    local Success, Result = pcall(function()
+        return game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua", true)
+    end)
+    if Success and typeof(Result) == "string" and string.find(Result, "dawid") then
+        Fluent = env.loadstring(Result)()
+    else
+        return
     end
 end)
 
+-- Setting function
 local Script = {
     Main = {
         ["swing"] = false,
@@ -334,6 +162,8 @@ local Script = {
         ["FlySpeed"] = {},
         ["TeleportPlayers"] = false,
         ["SpectatePlayers"] = false,
+        ["WalkSpeedsave"] = {},
+        ["WalkSpeed"] = 30,
         ["JumpValue"] = 50,
         ["JumpToggle"] = false,
         ["Noclip"] = false
@@ -346,7 +176,10 @@ local Script = {
     Eggs = {
         ["SelectTeleport"] = {},
         ["SelectOpenEggs"] = {},
-        ["open"] = false
+        ["open"] = false,
+        ["autoEvolvePets"] = false,
+        ["TypeOfSell"] = false,
+        ["SelectToSell"] = false
     },
     Teleports = {
         ["SelectIslands"] = {},
@@ -360,58 +193,76 @@ local Script = {
     },
 }
 
-local MainUi = httprequest({
-    Url = "https://raw.githubusercontent.com/SixZensED/Scripts/main/main.lua",
-    Method = "GET"
-})
-if MainUi.StatusCode == 200 then
-    shared.Fluent = getfenv().loadstring(MainUi.Body)()
-end
+--// for specific game
+env._trash_table = {
+    ["Stuff"] = {
+        ["Shop"] = {},
+        ["Island"] = {},
+        ["Crystal"] = {},
+        ["SellArea"] = {},
+        ["Boss"] = {},
+        ["Ranks"] = {},
+        ["PetsFolder"] = {}
+    },
+    ["Character"] = {
+        ["Velocity"] = RandomCharacters(math.random(16,32))
+    }
+}
 
---// Addon function
-local function FireTouchPart(Part: BasePart)
-	local TouchTransmitter = Part:FindFirstChildOfClass("TouchTransmitter")
-	if not TouchTransmitter then return end
+--// insert table
+run(function()
+    local suc , fail = pcall(function()
 
-	local Root = gethumanoidrootpart()
-
-    if firetouchinterest and not IsOnMobile and executor_used ~= "Forlorn" or executor_used ~= "Solara" 
-    then
-        firetouchinterest(Root, Part, 0)
-        task.wait()
-        firetouchinterest(Root, Part, 1)
-    elseif firetouchinterest and IsOnMobile
-    then
-        firetouchinterest(Root, Part, 0)
-        task.wait()
-        firetouchinterest(Root, Part, 1)
-    elseif firetouchinterest and executor_used == "Forlorn" or executor_used == "Solara"
-    then
-        firetouchinterest(Root, Part, 1)
-        task.wait()
-    elseif executor_used == "Xeno" then
-        game.Players.LocalPlayer:Kick("Please using other executor better experience 😢") -- xeno is sick
-    else
-        return print("something is error with firetouchinterest(function)")
-    end
-end
-
-local function GetSword()
-    for i,v in ipairs(lp.Backpack:GetChildren()) do
-        if v:IsA("Tool") and v:FindFirstChild("attackKatanaScript") then
-            return v
+        for i,v in pairs(workspace:WaitForChild("islandUnlockParts"):GetChildren()) do
+            table.insert(env._trash_table.Stuff.Island, v.Name)
         end
-    end
-    for i,v in ipairs(lp.Character:GetChildren()) do
-        if v:IsA("Tool") and v:FindFirstChild("attackKatanaScript") then
+
+        for i,v in pairs(workspace:WaitForChild("mapCrystalsFolder"):GetChildren()) do
+            table.insert(env._trash_table.Stuff.Crystal, v.Name)
+        end
+
+        for i,v in pairs(workspace:WaitForChild("sellAreaCircles"):GetChildren()) do
+            table.insert(env._trash_table.Stuff.SellArea, v.Name)
+        end
+
+        for i,v in pairs(workspace:WaitForChild("shopAreaCircles"):GetChildren()) do
+            table.insert(env._trash_table.Stuff.Shop, v.Name)
+        end
+
+        for i,v in pairs(workspace:WaitForChild("bossFolder"):GetChildren()) do
+            table.insert(env._trash_table.Stuff.Boss, v.Name)
+        end
+
+        for i,v in pairs(rs:WaitForChild("Ranks")["Ground"]:GetChildren()) do
+            table.insert(env._trash_table.Stuff.Ranks, v.Name)
+        end
+
+        for i,v in pairs(LocalPlayer:WaitForChild("petsFolder"):GetChildren()) do
+            table.insert(env._trash_table.Stuff.PetsFolder, v.Name)
+        end
+
+        if not suc then return end
+
+    end)
+end)
+
+--// All Element
+local Element = loadstring(game:HttpGet("https://gist.githubusercontent.com/Pri4c1lla/ed34be9357bddcb2b28c6513c5621941/raw/ac26ebcc81d55b005845860079a0a7fb12f2101d/Element.lua"))()
+local infJumpDebounce
+env.oldwalkspeed = lp.Character:FindFirstChildOfClass('Humanoid').WalkSpeed
+local AreaCFrame={[1]=CFrame.new(-119.522469,13002.2637,274.569244,0.342042685,-0,-0.939684391,0,1,-0,0.939684391,0,0.342042685),[2]=CFrame.new(354.477539,8874.26367,116.569244,0.342042685,-0,-0.939684391,0,1,-0,0.939684391,0,0.342042685),[3]=CFrame.new(330.127533,16921.8223,-16.1307545,0.342042685,-0,-0.939684391,0,1,-0,0.939684391,0,0.342042685),[4]=CFrame.new(1848.47754,82.2061615,-137.430756,0.342042685,-0,-0.939684391,0,1,-0,0.939684391,0,0.342042685),[5]=CFrame.new(627.358643,82.2061615,2429.48657,-0.422592998,0,-0.906319618,0,1,0,0.906319618,0,-0.422592998),[6]=CFrame.new(330.127533,30432.8242,-16.1307545,0.342042685,-0,-0.939684391,0,1,-0,0.939684391,0,0.342042685),[7]=CFrame.new(1875.96692,82.2061615,-6806.41016,0.965929627,-0,-0.258804798,0,1,-0,0.258804798,0,0.965929627),[8]=CFrame.new(5041.17725,82.2061615,1614.74866,0.258864343,-0,-0.965913713,0,1,-0,0.965913713,0,0.258864343)}
+
+local function GetLastIsland()
+	return env._trash_table.Stuff.Island[#env._trash_table.Stuff.Island]
+end
+
+local function GetChestName()
+    for i,v in pairs(workspace:GetChildren()) do
+        if v:IsA("Model") and string.match(v.Name,"Chest") and not string.match(v.Name,"group") and not string.match(v.Name,"evil") and not string.match(v.Name,"light") and v.circleSignPart.signGui.timeLabel.text == "Ready To Collect" then
             return v
         end
     end
     return nil
-end
-
-local function GetLastIsland()
-	return shared.tables.Table.Island[#shared.tables.Table.Island]
 end
 
 local function findchi()
@@ -426,60 +277,64 @@ local function findchi()
     return nil
 end
 
-local function GetChestName()
-    for _,v in pairs(workspace:GetChildren()) do
-        if v:IsA("Model") and string.match(v.Name,"Chest") and not string.match(v.Name,"group") and not string.match(v.Name,"evil") and not string.match(v.Name,"light") and v.circleSignPart.signGui.timeLabel.text == "Ready To Collect" then
+local function EquipShuriken()
+    for _,v in pairs(lp:FindFirstChildOfClass("Backpack"):GetDescendants()) do
+        if v:IsA("Tool") and v.Name:lower():find("shuriken") then
             return v
         end
     end
     return nil
 end
 
-local function CallNinjaEvent(com,...)
-    local Remote = lp:WaitForChild(com)
-    if Remote:IsA("RemoteEvent") then
-        Remote:FireServer(...)
-    elseif Remote:IsA("RemoteFunction") then
-        Remote:InvokeServer(...)
+local function Katana()
+    for i,v in ipairs(lp.Backpack:GetChildren()) do
+        if v:IsA("Tool") and v:FindFirstChild("attackKatanaScript") then
+            return v
+        end
     end
-end
-
-local function EquipShuriken()
-    for _,v in pairs(lp:FindFirstChildOfClass("Backpack"):GetDescendants()) do
-        if string.match(tostring(v.Name),"Shuriken") then return v end
+    for i,v in ipairs(lp.Character:GetChildren()) do
+        if v:IsA("Tool") and v:FindFirstChild("attackKatanaScript") then
+            return v
+        end
     end
     return nil
 end
 
-local GameInfo = MarketplaceService:GetProductInfo(game.PlaceId)
+local function randomteleport(Part)
+    if RandomType == 1 then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Part.HumanoidRootPart.CFrame * CFrame.new(0, 7, 1)
+    elseif RandomType == 2 then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Part.HumanoidRootPart.CFrame * CFrame.new(0, 1, 7)
+    elseif RandomType == 3 then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Part.HumanoidRootPart.CFrame * CFrame.new(1, 1, -7)
+    elseif RandomType == 4 then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Part.HumanoidRootPart.CFrame * CFrame.new(7, 1, 0)
+    elseif RandomType == 5 then
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Part.HumanoidRootPart.CFrame * CFrame.new(-7, 1, 0)
+    else
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = Part.HumanoidRootPart.CFrame * CFrame.new(0, 7, 1)
+    end
+end
 
---! UI Initializer
+--// UI Initializer
 run(function()
-    local Fluent = shared.Fluent
     local Options = Fluent.Options
 
     local Window = Fluent:CreateWindow({
         Title = `{GameInfo.Name}`,
         SubTitle = `By github.com/Pri4c1lla/roblox-projects`,
-        TabWidth = shared.SettingUi.TabWidth,
-        Size = UDim2.fromOffset(table.unpack(shared.SettingUi.Size)),
-        Theme = shared.SettingUi.Theme,
-        Acrylic = shared.SettingUi.Acrylic,
-        MinimizeKey = shared.SettingUi.MinimizeKey
+        TabWidth = env.SettingUi.TabWidth,
+        Size = UDim2.fromOffset(table.unpack(env.SettingUi.Size)),
+        Theme = env.SettingUi.Theme,
+        Acrylic = env.SettingUi.Acrylic,
+        MinimizeKey = env.SettingUi.MinimizeKey
     })
 
-    shared.Tabs = {
-        Main = Window:AddTab({ Title = "Main", Icon = "component" }),
-        Boss = Window:AddTab({ Title = "Boss", Icon = "swords" }),
-        Players = Window:AddTab({ Title = "Players", Icon = "users" }),
-        Eggs = Window:AddTab({ Title = "Eggs", Icon = "egg" }),
-        Teleports = Window:AddTab({ Title = "Teleports", Icon = "terminal" }),
-        Misc = Window:AddTab({ Title = "Misc", Icon = "align-left" }),
-    }
+    local Tabs = { Main=Window:AddTab({ Title = "Main" , Icon = "component"}) , Boss = Window:AddTab({ Title = "Boss", Icon = "swords"}) , Players = Window:AddTab({ Title = "Players" , Icon = "users"}) , Eggs = Window:AddTab({ Title = "Eggs" , Icon = "egg" }) , Teleports = Window:AddTab({ Title = "Teleports", Icon = "terminal" }) , Misc = Window:AddTab({ Title = "Misc" , Icon = "align-left"}) }
 
-    local Tabs = shared.Tabs -- i just lazy
+    Window:SelectTab(1)
 
-    local AutoSwing = Tabs.Main:AddToggle("", {Title = "Auto Swing", Description = "not syncing with client. idk why", Default = false})
+    local AutoSwing = Tabs.Main:AddToggle("", {Title = "Auto Swing", Description = "", Default = false})
     AutoSwing:OnChanged(function(v)
         Script.Main.swing = v
     end)
@@ -489,11 +344,11 @@ run(function()
         Script.Main.sword = v
         pcall(function()
             if Script.Main.sword then
-                shared.CreateThered:newThread(.1,function(self)
+                env.CreateThered:newThread(.1,function(self)
                     if not Script.Main.sword then
                         self:Disable()
                     end
-                    CallNinjaEvent("ninjaEvent","buyAllSwords",GetLastIsland())
+                    LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllSwords",GetLastIsland())
                 end)
             end
         end)
@@ -504,11 +359,11 @@ run(function()
         Script.Main.belts = v
         pcall(function()
             if Script.Main.belts then
-                shared.CreateThered:newThread(.1,function(self)
+                env.CreateThered:newThread(.1,function(self)
                     if not Script.Main.belts then
                         self:Disable()
                     end
-                    CallNinjaEvent("ninjaEvent","buyAllBelts",GetLastIsland())
+                    LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllBelts",GetLastIsland())
                 end)
             end
         end)
@@ -519,11 +374,11 @@ run(function()
         Script.Main.skills = v
         pcall(function()
             if Script.Main.skills then
-                shared.CreateThered:newThread(.1,function(self)
+                env.CreateThered:newThread(.1,function(self)
                     if not Script.Main.skills then
                         self:Disable()
                     end
-                    CallNinjaEvent("ninjaEvent","buyAllSkills",GetLastIsland())
+                    LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllSkills",GetLastIsland())
                 end)
             end
         end)
@@ -534,11 +389,11 @@ run(function()
         Script.Main.shurikens = v
         pcall(function()
             if Script.Main.shurikens then
-                shared.CreateThered:newThread(.1,function(self)
+                env.CreateThered:newThread(.1,function(self)
                     if not Script.Main.shurikens then
                         self:Disable()
                     end
-                    CallNinjaEvent("ninjaEvent","buyAllShurikens",GetLastIsland())
+                    LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllShurikens",GetLastIsland())
                 end)
             end
         end)
@@ -549,13 +404,13 @@ run(function()
         Script.Main.Ranks = v
         pcall(function()
             if Script.Main.Ranks then
-                shared.CreateThered:newThread(.25,function(self)
+                env.CreateThered:newThread(.25,function(self)
                     if not Script.Main.Ranks  then
                         self:Disable()
                     end
-                    for _, v in next, shared.tables.Table.Ranks do
-                        CallNinjaEvent("ninjaEvent","buyRank", v)
-                        wait()
+                    for _, v in next, env._trash_table.Stuff.Ranks do
+                        LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyRank", v)
+                        task.wait()
                     end
                 end)
             end
@@ -574,7 +429,7 @@ run(function()
                         Title = "Confirm",
                         Callback = function()
                             for _,Elements in next, Element do
-                                ReplicatedStorage:WaitForChild("rEvents"):FindFirstChild("elementMasteryEvent"):FireServer(Elements)
+                                rs:WaitForChild("rEvents"):FindFirstChild("elementMasteryEvent"):FireServer(Elements)
                             end
                         end
                     },
@@ -589,18 +444,18 @@ run(function()
         end
     })
 
-    local CollectChests = Tabs.Main:AddToggle("", {Title = "Collect All Chests", Description = "Collecting is find (maybe😂)", Default = false})
+    local CollectChests = Tabs.Main:AddToggle("", {Title = "Collect All Chests", Description = "Fixed", Default = false})
     CollectChests:OnChanged(function(v)
         Script.Main.Chest = v
         pcall(function()
             if Script.Main.Chest then
-                shared.CreateThered:newThread(.1,function(self)
+                env.CreateThered:newThread(.25,function(self)
                     if not Script.Main.Chest then
                         self:Disable()
                     end
                     local Chests = GetChestName()
                     if Chests ~= nil then
-                        FireTouchPart(Chests.circleInner)
+                        FireTouchPart(Chests.circleInner) 
                     end
                 end)
             end
@@ -611,19 +466,19 @@ run(function()
     AutoChi:OnChanged(function(v)
         Script.Main.Chi = v
         pcall(function()
-            if Script.Main.Chi and getgenv().AllowBackOldPos then
-                oldpos = gethumanoidrootpart().CFrame
+            if Script.Main.Chi and env.AllowBackOldPos then
+                oldpos = HumanoidRootPart().CFrame
             else
-                gethumanoidrootpart().CFrame = oldpos
+                HumanoidRootPart().CFrame = oldpos
             end
         end)
     end)
 
-    local AutoHoops = Tabs.Main:AddToggle("", {Title = "Auto Hoops", Description = "(Depend On Ping) delay is 0.1", Default = false})
+    local AutoHoops = Tabs.Main:AddToggle("", {Title = "Auto Hoops", Description = "(Depend On Ping) delay is 0.25", Default = false})
     AutoHoops:OnChanged(function(v)
         Script.Main.Hoops = v
         if Script.Main.Hoops then
-            shared.CreateThered:newThread(.25,function(self)
+            env.CreateThered:newThread(.25,function(self)
                 if not Script.Main.Hoops then
                     self:Disable()
                 end
@@ -631,8 +486,8 @@ run(function()
                     if v:IsA("MeshPart") then
                         if v:FindFirstChild("beingUsed") then return end
                         task.defer(function()
-                            local oldpostouchPart = v.touchPart.CFrame
-                            v.touchPart.CFrame = gethumanoidrootpart().CFrame
+                            oldpostouchPart = v.touchPart.CFrame
+                            v.touchPart.CFrame = HumanoidRootPart().CFrame
                             task.wait()
                             v.touchPart.CFrame = oldpostouchPart
                         end)
@@ -645,7 +500,7 @@ run(function()
     local openshop = Tabs.Main:AddDropdown("", {
         Title = "Open Shop",
         Description = "",
-        Values = shared.tables.Table.Shop,
+        Values = env._trash_table.Stuff.Shop,
         Multi = false,
         Default = 1,
     })
@@ -661,7 +516,7 @@ run(function()
         Description = "",
         Callback = function()
             for i,v in pairs(workspace.shopAreaCircles:GetChildren()) do
-                if string.find(v.Name,Script.Main.typeshop) then
+                if string.match(v.Name,Script.Main.typeshop) then
                     FireTouchPart(v.circleInner)
                 end
             end
@@ -671,7 +526,7 @@ run(function()
     local SEC = Tabs.Main:AddDropdown("", {
         Title = "Sell Area",
         Description = "Select a Sell Part",
-        Values = shared.tables.Table.SellArea,
+        Values = env._trash_table.Stuff.SellArea,
         Multi = false,
         Default = 1,
     })
@@ -700,20 +555,20 @@ run(function()
         Script.Main.Sell = v
             pcall(function()
             if Script.Main.Sell then
-                shared.CreateThered:newThread(nil,function(self)
+                env.CreateThered:newThread(0,function(self)
                     if not Script.Main.Sell then
                         self:Disable()
                     end
                     if Script.Main.typeSell == "Instant" then
                         for i,v in pairs(workspace.sellAreaCircles:GetChildren()) do
-                            if string.find(v.Name,Script.Main.SellPart) then
+                            if string.match(v.Name,Script.Main.SellPart) then
                                 FireTouchPart(v.circleInner)
                             end
                         end
                     elseif Script.Main.typeSell == "Full(max)" then
                         if PlayerGui.gameGui.maxNinjitsuMenu.Visible ~= false then
                             for i,v in pairs(workspace.sellAreaCircles:GetChildren()) do
-                                if string.find(v.Name,Script.Main.SellPart) then
+                                if string.match(v.Name,Script.Main.SellPart) then
                                     FireTouchPart(v.circleInner)
                                 end
                             end
@@ -727,109 +582,72 @@ run(function()
     local autoWheel = Tabs.Main:AddToggle("", {Title = "auto Wheel(24h Cooldown)", Default = false})
     autoWheel:OnChanged(function(v)
         Script.Main.Wheel = v
-        pcall(function()
-            if Script.Main.Wheel then
-                shared.CreateThered:newThread(.5,function(self)
-                    if not Script.Main.Wheel then
-                        self:Disable()
-                    end
-                    ReplicatedStorage:WaitForChild("rEvents"):WaitForChild("openFortuneWheelRemote"):InvokeServer("openFortuneWheel",workspace:WaitForChild("Fortune Wheel"))
-                end)
-            end
-        end)
+        if Script.Main.Wheel then
+            env.CreateThered:newThread(.5,function(self)
+                if not Script.Main.Wheel then
+                    self:Disable()
+                end
+                rs:WaitForChild("rEvents"):WaitForChild("openFortuneWheelRemote"):InvokeServer("openFortuneWheel",workspace:WaitForChild("Fortune Wheel"))
+            end)
+        end
     end)
 
-    local SB = Tabs.Boss:AddDropdown("Dropdown", {
+    --// Boss tabs
+
+    local Bossdropdown = Tabs.Boss:AddDropdown("Dropdown", {
         Title = "Select Boss",
-        Values = shared.tables.Table.Boss,
+        Values = env._trash_table.Stuff.Boss,
         Multi = false,
         Default = 1,
     })
 
-    SB:SetValue(nil)
+    Bossdropdown:SetValue(nil)
 
-    SB:OnChanged(function(v)
+    Bossdropdown:OnChanged(function(v)
         Script.Boss.SelectBoss = v
     end)
-
-    Tabs.Boss:AddButton({
-        Title = "Update Boss",
-        Description = "reset dropdown",
-        Callback = function()
-            SB:Clear()
-            wait(.1)
-            for i,v in pairs(workspace.bossFolder:GetChildren()) do
-                SB:Add(v.Name)
-            end
-        end
-    })
 
     local KillBoss = Tabs.Boss:AddToggle("", {Title = "Kill Boss", Default = false })
     KillBoss:OnChanged(function(v)
         Script.Boss.KillBoss = v
-        pcall(function()
-            if Script.Boss.KillBoss then
-                getgenv().needatk = true
-            else
-                getgenv().needatk = false
-            end
-        end)
+        if Script.Boss.KillBoss then
+            env.needatk = Script.Boss.KillBoss
+        else
+            env.needatk = Script.Boss.KillBoss
+        end
     end)
-    
-    local InstantBoss = Tabs.Boss:AddToggle("", {Title = "Instant Kill Boss", Description = "get close to boss, to work.", Default = false })
+
+    local InstantBoss = Tabs.Boss:AddToggle("", {Title = "Instant Kill Boss", Description = "", Default = false })
     InstantBoss:OnChanged(function(v)
         Script.Boss.InstantBoss = v
     end)
     
-    local InstantAllBoss = Tabs.Boss:AddToggle("", {Title = "Kill All Boss", Description = "get close to boss, to work.", Default = false })
+    local InstantAllBoss = Tabs.Boss:AddToggle("", {Title = "Instant Kill All Boss", Description = "", Default = false })
     InstantAllBoss:OnChanged(function(v)
         Script.Boss.InstantAllBoss = v
     end)
-    
-    local SelectPlr = Tabs.Players:AddDropdown("SelectedPlyer", {
-        Title = "Players",
-        Values = shared.tables.Table.Players,
-        Multi = false,
-        Default = 1,
-    })
-    
-    SelectPlr:SetValue("nil")
-    
-    SelectPlr:OnChanged(function(Value)
-        Script.Players.SelectPlayers = Value
-    end)
-    
-    Tabs.Players:AddButton({
-        Title = "Refresh Dropdown",
-        Description = "Update Players (Lag if Players > 6)",
-        Callback = function()
-            SelectPlr:Clear()
-            wait(.1)
-            for _,v in next, Players:GetPlayers() do
-                SelectPlr:Add(v.Name)
-            end
+
+    --// Players tabs
+
+    local WalkSpeed = Tabs.Players:AddSlider("", {
+        Title = "WalkSpeed",
+        Description = "",
+        Default = 100,
+        Min = 50,
+        Max = 1000,
+        Rounding = 10,
+        Callback = function(v)
+            Script.Players.WalkSpeedsave = tonumber(v)
         end
     })
-    
-    local SpectatePly = Tabs.Players:AddToggle("ToggleQuanSat", {
-        Title = "Spectate Player",
-        Default = false
-    })
-    SpectatePly:OnChanged(function(Value)
-        Script.Players.IsSpectator = Value
+
+    WalkSpeed:SetValue(30)
+
+    local LoopWalkSpeed = Tabs.Players:AddToggle("L_542_", {Title = "Toggle WalkSpeed", Description = "", Default = false})
+    LoopWalkSpeed:OnChanged(function(Value)
+        Script.Players.WalkSpeed = Value
     end)
-    
-    local Teleport2Lp = Tabs.Players:AddToggle("ToggleTeleport", {
-        Title = "Teleport to Players",
-        Default = false
-    })
-    
-    Teleport2Lp:OnChanged(function(Value)
-        Script.Players.TeleportPlayers = Value
-    end)
-    
-    Options.ToggleTeleport:SetValue(false)
-    
+
     local Jumped = Tabs.Players:AddSlider("", {
         Title = "Jumppower",
         Description = "",
@@ -837,8 +655,8 @@ run(function()
         Min = 50,
         Max = 1000,
         Rounding = 10,
-        Callback = function(Value)
-            Script.Players.JumpValue = Value / 2
+        Callback = function(v)
+            Script.Players.JumpValue = tonumber(v)
         end
     })
     
@@ -848,15 +666,16 @@ run(function()
         Script.Players.JumpValue = Value
     end)
     
-    local Setloop222 = Tabs.Players:AddToggle("L_542_", {Title = "Jumppower", Description = "", Default = false})
-    Setloop222:OnChanged(function(Value)
+    local LoopJumpPower = Tabs.Players:AddToggle("L_542_", {Title = "Toggle JumpPower", Description = "", Default = false})
+    LoopJumpPower:OnChanged(function(Value)
         Script.Players.JumpToggle = Value
     end)
 
     local infJumpes = Tabs.Players:AddToggle("", {Title = "inf Jump", Description = "", Default = false})
     infJumpes:OnChanged(function(v)
-        getgenv().faGStOFQ6W = v
-        if getgenv().faGStOFQ6W then
+        env.faGStOFQ6W = v
+        -- i don't know what i do
+        if env.faGStOFQ6W then
             if infJump then infJump:Disconnect() end
             infJumpDebounce = false
             infJump = UserInputService.JumpRequest:Connect(function()
@@ -891,9 +710,9 @@ run(function()
             else
                 run(function()
                     pcall(function()
-                        shared.AngularVC.Parent = nil;
-                        shared.FlightGyro.Parent = nil;
-                        shared.FlightBV.Parent = nil;
+                        env.AngularVC.Parent = nil;
+                        env.FlightGyro.Parent = nil;
+                        env.FlightBV.Parent = nil;
                         getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false;
                     end)
                 end)
@@ -904,7 +723,7 @@ run(function()
     local FlyToggle = Tabs.Players:AddToggle("FlyingMoblie", {Title = "Fly", Description = "Toggle Fly For Mobile Users", Default = false })
     FlyToggle:OnChanged(function(v)
         Script.Players.flightmb = v
-        if Script.Players.flightmb and IsOnMobile and not shared.Shion_Debug then
+        if Script.Players.flightmb and IsOnMobile and not env.Shion_Debug then
             while Script.Players.flightmb do task.wait()
                 local character = getchar()
                 local humanoid = character and character:FindFirstChildOfClass("Humanoid")
@@ -915,9 +734,9 @@ run(function()
         else
             run(function()
                 pcall(function()
-                    shared.AngularVC.Parent = nil;
-                    shared.FlightGyro.Parent = nil;
-                    shared.FlightBV.Parent = nil;
+                    env.AngularVC.Parent = nil;
+                    env.FlightGyro.Parent = nil;
+                    env.FlightBV.Parent = nil;
                     getchar():FindFirstChildOfClass("Humanoid").PlatformStand = false;
                 end)
             end)
@@ -946,22 +765,11 @@ run(function()
     Noclipv:OnChanged(function(v)
         Script.Players.Noclip = v
     end)
-    
-    local Platformv = Tabs.Players:AddToggle("", {Title = "Platform", Description = "bring part to your beneath you causing you to float", Default = false})
-    Platformv:OnChanged(function(v)
-        getgenv().Float = v
-        pcall(function()
-            if getgenv().Float and not float then
-                Floating()
-            else
-                float = false
-            end
-        end)
-    end)
 
+    --// Teleport tabs
     local SelectIsland = Tabs.Teleports:AddDropdown("Island", {
         Title = "Select Islands to Teleport",
-        Values = shared.tables.Table.Island,
+        Values = env._trash_table.Stuff.Island,
         Multi = false,
         Default = 1,
     })
@@ -978,17 +786,17 @@ run(function()
         Callback = function()
             for i,v in pairs(workspace.islandUnlockParts:GetChildren()) do
                 if v.Name == Script.Teleports.SelectIslands then
-                    gethumanoidrootpart().CFrame = v.CFrame * CFrame.new(0,15,0)
+                    HumanoidRootPart().CFrame = v.CFrame * CFrame.new(0,15,0)
                 end
             end
         end
     })
-    
+
     Tabs.Teleports:AddButton({
         Title = "Unlock All Island",
         Description = "",
         Callback = function()
-            for _,index in next, shared.tables.Table.Island do
+            for _,index in next, env._trash_table.Stuff.Island do
                 for i,v in pairs(workspace.islandUnlockParts[index]:GetChildren()) do
                     if v.Name == "TouchInterest" and v.Parent then
                         FireTouchPart(v.Parent)
@@ -1030,23 +838,23 @@ run(function()
         Callback = function()
             if Script.Teleports.TypeKarma == "Evil" then
                 if Script.Teleports.SelectArea == "-+100 Karma" then
-                    gethumanoidrootpart().CFrame = AreaCFrame[1]
+                    HumanoidRootPart().CFrame = AreaCFrame[1]
                 elseif Script.Teleports.SelectArea == "-250 Karma" then
-                    gethumanoidrootpart().CFrame = AreaCFrame[3]
+                    HumanoidRootPart().CFrame = AreaCFrame[3]
                 elseif Script.Teleports.SelectArea == "-+2000 Karma" then
-                    gethumanoidrootpart().CFrame = AreaCFrame[5]
+                    HumanoidRootPart().CFrame = AreaCFrame[5]
                 elseif Script.Teleports.SelectArea == "-+5000 Karma" then
-                    gethumanoidrootpart().CFrame = AreaCFrame[7]
+                    HumanoidRootPart().CFrame = AreaCFrame[7]
                 end
             elseif Script.Teleports.TypeKarma == "Light" then
                 if Script.Teleports.SelectArea == "-+100 Karma" then
-                    gethumanoidrootpart().CFrame = AreaCFrame[2]
+                    HumanoidRootPart().CFrame = AreaCFrame[2]
                 elseif Script.Teleports.SelectArea == "+1000 Karma" then
-                    gethumanoidrootpart().CFrame = AreaCFrame[4]
+                    HumanoidRootPart().CFrame = AreaCFrame[4]
                 elseif Script.Teleports.SelectArea == "-+2000 Karma" then
-                    gethumanoidrootpart().CFrame = AreaCFrame[6]
+                    HumanoidRootPart().CFrame = AreaCFrame[6]
                 elseif Script.Teleports.SelectArea == "-+5000 Karma" then
-                    gethumanoidrootpart().CFrame = AreaCFrame[8]
+                    HumanoidRootPart().CFrame = AreaCFrame[8]
                 end
             end
         end
@@ -1056,7 +864,7 @@ run(function()
         Title = "Teleport Dojo",
         Description = "Teleporting to Infinty Stats Dojo",
         Callback = function()
-            gethumanoidrootpart().CFrame = workspace.areaTeleportParts.valleyToInfinityStatsDojo.CFrame
+            HumanoidRootPart().CFrame = workspace.areaTeleportParts.valleyToInfinityStatsDojo.CFrame
         end
     })
 
@@ -1064,7 +872,7 @@ run(function()
         Title = "Teleport Altar",
         Description = "Teleporting to altar Of Elements",
         Callback = function()
-            gethumanoidrootpart().CFrame = workspace.areaTeleportParts.valleyToAltarOfElements.CFrame
+            HumanoidRootPart().CFrame = workspace.areaTeleportParts.valleyToAltarOfElements.CFrame
         end
     })
 
@@ -1072,13 +880,13 @@ run(function()
         Title = "Teleport Cloneing Altar",
         Description = "Teleporting to Pet Cloning Altar",
         Callback = function()
-            gethumanoidrootpart().CFrame = workspace.areaTeleportParts.valleyToCloningAltar.CFrame
+            HumanoidRootPart().CFrame = workspace.areaTeleportParts.valleyToCloningAltar.CFrame
         end
     })
 
     local TeleportEgg = Tabs.Eggs:AddDropdown("Eggss", {
         Title = "Select To Teleport",
-        Values = shared.tables.Table.Crystal,
+        Values = env._trash_table.Stuff.Crystal,
         Multi = false,
         Default = 1,
     })
@@ -1093,13 +901,13 @@ run(function()
         Title = "Teleport to Crystals / Eggs",
         Description = "",
         Callback = function()
-            gethumanoidrootpart().CFrame = workspace.mapCrystalsFolder[Script.Eggs.SelectTeleport]:GetModelCFrame() * CFrame.new(0,5,0)
+            HumanoidRootPart().CFrame = workspace.mapCrystalsFolder[Script.Eggs.SelectTeleport]:GetModelCFrame() * CFrame.new(0,5,0)
         end
     })
     
     local Eggs = Tabs.Eggs:AddDropdown("Eggs", {
         Title = "Select Egg",
-        Values = shared.tables.Table.Crystal,
+        Values = env._trash_table.Stuff.Crystal,
         Multi = false,
         Default = 1,
     })
@@ -1115,9 +923,32 @@ run(function()
         Script.Eggs.open = v
     end)
 
+    local autoEvolvePets = Tabs.Eggs:AddToggle("", {Title = "auto Evolve Pets", Description = "",Default = false })
+    autoEvolvePets:OnChanged(function(v)
+        Script.Eggs.autoEvolvePets = v
+    end)
+
+    local Sellpets = Tabs.Eggs:AddDropdown("Dropdown", {
+        Title = "Type of Sell",
+        Values = env._trash_table.Stuff.PetsFolder,
+        Multi = false,
+        Default = 1,
+    })
+
+    Sellpets:SetValue("nil")
+
+    Sellpets:OnChanged(function(v)
+        Script.Eggs.TypeOfSell = v
+    end)
+
+    local Folderpets = Tabs.Eggs:AddToggle("", {Title = "Sell Pets", Default = false })
+    Folderpets:OnChanged(function(v)
+        Script.Eggs.SelectToSell = v
+    end)
+
     local abop = Tabs.Misc:AddToggle("", {Title = "Allow Return Old Position", Description = "work with all function that mention save old position.", Default = true })
     abop:OnChanged(function(v)
-        getgenv().AllowBackOldPos = v
+        env.AllowBackOldPos = v
     end)
 
     Tabs.Misc:AddButton({
@@ -1161,7 +992,7 @@ run(function()
 
     Tabs.Misc:AddButton({
         Title = "get max jump",
-        Description = "this update(11/23/2024)max jump is 50",
+        Description = "max jump is 50",
         Callback = function()
             lp:FindFirstChild("multiJumpCount").Value = 9e9
         end
@@ -1184,24 +1015,22 @@ run(function()
         Description = "",
         Callback = function()
             if getchar() then
-                local hrp = gethumanoidrootpart()
+                local hrp = HumanoidRootPart()
                 if hrp then
-                    local cf = getgenv().MainPart.CFrame * CFrame.new(0,3,0)
+                    local cf = env.MainPart.CFrame * CFrame.new(0,3,0)
                     hrp.CFrame = cf
                 end
             end
         end
     })
 
-    run(function()
-        NotificationLoad:NewNotification({
-            ["Mode"] = "Info",
-            ["Title"] = "all tabs is loaded, please wait.",
-            ["Description"] = "",
-            ["Timeout"] = 5,
-            ["Audio"] = false
-        })
-    end)
+    NotificationLoad:NewNotification({
+        ["Mode"] = "Info",
+        ["Title"] = "all tabs is loaded, please wait.",
+        ["Description"] = "",
+        ["Timeout"] = 5,
+        ["Audio"] = false
+    })
 
     local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
     local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
@@ -1223,22 +1052,21 @@ run(function()
 
 end)
 
-LPH_JIT_MAX(function()
-
+run(function()
     RunService.Heartbeat:Connect(function()
 
         pcall(function()
 
-            if Script.Main.swing or getgenv().needatk then
-                if lp.Character then
-                    local Humanoid = lp.Character.Humanoid
-                    local get_sword = GetSword()
+            if Script.Main.swing or env.needatk then
+                if getchar() then
+                    local Humanoid = getchar().Humanoid
+                    local get_sword = Katana()
                     if (get_sword ~= nil and get_sword.Parent ~= nil) then
-                        if get_sword.Parent == lp.Character then
+                        if get_sword.Parent == getchar() then
                             task.spawn(function()
                                 get_sword:Activate()
                                 get_sword:Deactivate()
-                                CallNinjaEvent("ninjaEvent","swingKatana")
+                                LocalPlayer:WaitForChild("ninjaEvent"):FireServer("swingKatana")
                             end)
                         elseif get_sword.Parent == lp.Backpack then
                             Humanoid:EquipTool(get_sword)
@@ -1249,13 +1077,15 @@ LPH_JIT_MAX(function()
 
             if Script.Main.Chi then
                 local chi = findchi()
-                gethumanoidrootpart().CFrame = chi.CFrame
+                if chi ~= nil then
+                    HumanoidRootPart().CFrame = chi.CFrame
+                end
             end
 
             if Script.Boss.KillBoss then
                 for i,v in pairs(workspace.bossFolder:GetChildren()) do
                     if v.Name == Script.Boss.SelectBoss and v:FindFirstChild("HumanoidRootPart") and v:FindFirstChildOfClass("Humanoid") then
-                        gethumanoidrootpart().CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0,math.random(5),math.random(3))
+                        HumanoidRootPart().CFrame = randomteleport(v)
                         wait()
                     end
                 end
@@ -1281,13 +1111,13 @@ LPH_JIT_MAX(function()
             
                         movers = { bodyVelocity, bodyGyro, bodyAngularVelocity }
 
-                        shared.FlightBV = bodyVelocity
-                        shared.FlightGyro = bodyGyro
-                        shared.AngularVC = bodyAngularVelocity
+                        env.FlightBV = bodyVelocity
+                        env.FlightGyro = bodyGyro
+                        env.AngularVC = bodyAngularVelocity
                     end
             
                     if Script.Main.flight or Script.Players.flightmb then
-                        local camCFrame = Camera.CFrame
+                        local camCFrame = workspace.CurrentCamera.CFrame
                         local velocity = Vector3.zero
                         local rotation = camCFrame.Rotation
             
@@ -1318,7 +1148,7 @@ LPH_JIT_MAX(function()
                         TweenService:Create(bodyVelocity, tweenInfo, { Velocity = velocity * Script.Players.FlySpeed * 45 }):Play()
                         bodyVelocity.Parent = primaryPart
             
-                        if not getgenv().fling then
+                        if not env.fling then
                             TweenService:Create(bodyGyro, tweenInfo, { CFrame = camCFrame.Rotation }):Play()
                             bodyGyro.Parent = primaryPart
                         end
@@ -1378,6 +1208,31 @@ LPH_JIT_MAX(function()
                 end
             end
 
+            if Script.Eggs.autoEvolvePets then
+                local args = {
+                    [1] = "autoEvolvePets"
+                }
+                game:GetService("ReplicatedStorage"):WaitForChild("rEvents"):WaitForChild("autoEvolveRemote"):InvokeServer(unpack(args))
+            end
+
+            if Script.Eggs.SelectToSell then
+                if Script.Eggs.TypeOfSell ~= nil then
+                    for i,v in pairs(lp.petsFolder[Script.Eggs.TypeOfSell]:GetChildren()) do
+                        if v:IsA("StringValue") then
+                            rs:WaitForChild("rEvents"):WaitForChild("sellPetEvent"):FireServer("sellPet", v)
+                        end
+                    end
+                end
+            end
+
+            if Script.Players.WalkSpeed then
+                lp.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = Script.Players.WalkSpeedsave
+            else
+                if not Script.Players.WalkSpeed then
+                    lp.Character:FindFirstChildOfClass('Humanoid').WalkSpeed = env.oldwalkspeed
+                end
+            end
+
             if Script.Players.JumpToggle then
                 lp.Character:FindFirstChildOfClass('Humanoid').JumpPower = Script.Players.JumpValue
             else
@@ -1388,42 +1243,39 @@ LPH_JIT_MAX(function()
     
             if Script.Misc.Fastshurikens and not Script.Misc.KillAura then
                 for _, v in pairs(workspace.shurikensFolder:GetChildren()) do
-					if v.Name == "Handle" then
-						if v:FindFirstChild("BodyVelocity") then
-							local bv = v:FindFirstChildOfClass("BodyVelocity")
-							bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-							bv.Velocity = getMouse.Hit.lookVector * math.random(10000)
-						end
-					end
-				end
+                    if v.Name == "Handle" then
+                        if v:FindFirstChild("BodyVelocity") then
+                            local bv = v:FindFirstChildOfClass("BodyVelocity")
+                            bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                            bv.Velocity = getMouse.Hit.lookVector * math.random(10000)
+                        end
+                    end
+                end
             elseif Script.Misc.Fastshurikens and Script.Misc.KillAura then
                 for _, v in pairs(workspace.shurikensFolder:GetChildren()) do
-					if v.Name == "Handle" then
-						if v:FindFirstChild("BodyVelocity") then
-							local bv = v:FindFirstChildOfClass("BodyVelocity")
-							bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-                            bv.Velocity = getgenv().PositionTarget * math.random(10000)
-						end
-					end
-				end
+                    if v.Name == "Handle" then
+                        if v:FindFirstChild("BodyVelocity") then
+                            local bv = v:FindFirstChildOfClass("BodyVelocity")
+                            bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                            bv.Velocity = env.PositionTarget * math.random(10000)
+                        end
+                    end
+                end
             end
 
             if Script.Misc.KillAura then
                 for _,v in next, Players:GetPlayers() do
                     if v.Name ~= lp.Name then
-                        local i = (v.Character:FindFirstChild("HumanoidRootPart").Position - gethumanoidrootpart().Position).magnitude
-                        if i <= Script.Misc.RangeRadius and not v.Character:FindFirstChild("inSafezone") and not getchar():FindFirstChild("inSafezone") then
-                            getgenv().PositionTarget = v.Character:FindFirstChild("HumanoidRootPart").Position
+                        --local i = (v.Character:FindFirstChild("HumanoidRootPart").Position - HumanoidRootPart().Position).magnitude
+                        if lp:DistanceFromCharacter(v.Position) <= Script.Misc.RangeRadius and not v.Character:FindFirstChild("inSafezone") and not getchar():FindFirstChild("inSafezone") then
+                            env.PositionTarget = v.Character:FindFirstChild("HumanoidRootPart").Position
                             local x = EquipShuriken()
-                            if x ~= nil then
-                                x.Parent = getchar()
-                                wait()
-                                local args = {
-                                    [1] = "attackShuriken",
-                                    [2] = v.Character:FindFirstChild("HumanoidRootPart").Position
-                                }
-                                CallNinjaEvent("ninjaEvent",unpack(args)) 
-                            end
+                            x.Parent = getchar()
+                            local args = {
+                                [1] = "attackShuriken",
+                                [2] = v.Character:FindFirstChild("HumanoidRootPart").Position
+                            }
+                            LocalPlayer:WaitForChild("ninjaEvent"):FireServer(unpack(args))
                         end
                     end
                 end
@@ -1449,210 +1301,178 @@ LPH_JIT_MAX(function()
                 end
             end
 
-            if Script.Players.IsSpectator then
-                repeat wait()
-                    Camera.CameraSubject = Players:FindFirstChild(Script.Players.SelectPlayers).Character:FindFirstChildOfClass("Humanoid")
-                until not Players:FindFirstChild(Script.Players.SelectPlayers) or not Script.Players.IsSpectator
-                Camera.CameraSubject = lp.Character:FindFirstChildOfClass("Humanoid")
-                wait()
-            end
-    
-            if Script.Players.TeleportPlayers then
-                repeat wait()
-                    gethumanoidrootpart().CFrame = Players:FindFirstChild(Script.Players.SelectPlayers).Character.HumanoidRootPart.CFrame * CFrame.new(0,0,5)
-                until not Players:FindFirstChild(Script.Players.SelectPlayers) or Script.Players.TeleportPlayers == false or not Script.Players.TeleportPlayers
-                wait()
-            end
+            RunService.Heartbeat:wait()
 
         end)
-
     end)
+end)
 
-end)()
+run(function()
 
---// Safe part
-LPH_NO_VIRTUALIZE(function()
-	run(function()
+    local executor; executor = {
+        "Solara",
+        "Xeno",
+        "Forlorn"
+    }
 
-        local no_part,yes_part = pcall(function()
--- update for debug
-            assert(not getgenv().SafePart)
-            getgenv().SafePart = true;
-            getgenv().MainPart = Instance.new("Part",shared.Folder)
-            getgenv().MainPart.Anchored = true
-            getgenv().MainPart.Size = Vector3.new(150,1,150)
-            local r = math.random(10000)
-            local cf = Vector3.new(35e+3,35e+3,35e+3) + Vector3.new(r,r,r) -- 35e+3 = 35000
-            getgenv().MainPart.CFrame = CFrame.new(cf)
-            getgenv().MainPart.Material = Enum.Material.ForceField
+    for _,v in next, executor do 
+        if executor_used == v then
+            NotificationLoad:NewNotification({
+                ["Mode"] = "info",
+                ["Title"] = "Dear user who using Xeno/SynxRemake/Solara",
+                ["Description"] = "if some function not working it depending on your executor.", -- i just lazy to fix/error by executor. fix it yourself it open source
+                ["Timeout"] = 5,
+                ["Audio"] = false
+            })
+        end
+    end
 
-            shared.CreateThered:newThread(.25,function(self)
-                getgenv().MainPart.Name = game:GetService("HttpService"):GenerateGUID(false)
-                getgenv().MainPart.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
-            end)
+end)
 
+run(function()
+    local no_part,yes_part = pcall(function()
+        assert(not env.SafePart)
+        env.SafePart = true;
+        env.MainPart = Instance.new("Part",workspace)
+        env.MainPart.Anchored = true
+        env.MainPart.Size = Vector3.new(150,1,150)
+        local r = math.random(10000)
+        local cf = Vector3.new(35e+3,35e+3,35e+3) + Vector3.new(r,r,r) -- 35e+3 = 35000
+        env.MainPart.CFrame = CFrame.new(cf)
+        env.MainPart.Material = Enum.Material.ForceField
+        env.CreateThered:newThread(.25,function(self)
+            env.MainPart.Name = game:GetService("HttpService"):GenerateGUID(false)
+            env.MainPart.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
         end)
-
-        if no_part and not yes_part then
-            print("Client created safe part")
-        end
-        if yes_part then
-            print("Client has safe part already")
-        end
-
     end)
-end)()
+    if yes_part then
+        return("safe part had already done")
+    end
+end)
 
-LPH_NO_VIRTUALIZE(function()
-	run(function()
-		RunService.Stepped:Connect(function()
-            pcall(function()
-                if Script.Main.Chi or Script.Boss.KillBoss then
-                    if syn and syn.request then
-                        setfflag("HumanoidParallelRemoveNoPhysics", "False")
-                        setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
-                        game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(11)
-                        if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
-                            game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
-                        end
-                    else
-                        if lp.Character:FindFirstChild("HumanoidRootPart") then
+RandomType = 1
 
-                            if not lp.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
-                                if lp.Character:WaitForChild("Humanoid").Sit == true then
-                                    lp.Character:WaitForChild("Humanoid").Sit = false
-                                end
-                                if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand ~= true then
-                                    game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand = true
-                                end
-                                local Velocity = Instance.new("BodyVelocity",gethumanoidrootpart()) -- Set Parent to Humanoidrootpart
-                                Velocity.Name = shared.Yurikusa.Main.Velocity
-                                Velocity.MaxForce = Vector3.new(9e9,9e9,9e9);
-                                Velocity.Velocity = Vector3.new(0,0,0);
+run(function()
+    task.spawn(function()
+        while wait() do 
+            RandomType = math.random(1,5)
+            wait(0.3)
+        end
+    end)
+end)
+
+run(function()
+    RunService.Stepped:Connect(function()
+        pcall(function()
+            if Script.Main.Chi or Script.Boss.KillBoss then
+                if syn and syn.request then
+                    setfflag("HumanoidParallelRemoveNoPhysics", "False")
+                    setfflag("HumanoidParallelRemoveNoPhysicsNoSimulate2", "False")
+                    game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(11)
+                    if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
+                        game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
+                    end
+                else
+                    if game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        if not game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(env._trash_table.Character.Velocity) then
+                            if game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit == true then
+                                game.Players.LocalPlayer.Character:WaitForChild("Humanoid").Sit = false
                             end
-                            for _, part in pairs(lp.Character:GetDescendants()) do
-                                if part:IsA("BasePart") then
-                                    if noclipDefaults[part] == nil then
-                                        task.wait()
-                                        noclipDefaults[part] = part.CanCollide
+                            if game.Players.LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand ~= true then
+                                game.Players.LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand = true
+                            end
+                            local Velocity = Instance.new("BodyVelocity",HumanoidRootPart())
+                            Velocity.Name = env._trash_table.Character.Velocity
+                            Velocity.MaxForce = Vector3.new(9e9,9e9,9e9);
+                            Velocity.Velocity = Vector3.new(0,0,0);
+                        end
+                        for _, part in pairs(getchar():GetDescendants()) do
+                            if part:IsA("BasePart") then
+                                if noclipDefaults[part] == nil then
+                                    noclipDefaults[part] = part.CanCollide
+                                else
+                                    if not Script.Main.Chi or not Script.Boss.KillBoss or game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid").Health == 0
+                                    then
+                                        part.CanCollide = false
                                     else
-                                        if not Script.Main.Chi or not Script.Boss.KillBoss or lp.Character:FindFirstChildWhichIsA("Humanoid").Health == 0
-                                        then
-                                            part.CanCollide = false
-                                        else
-                                            part.CanCollide = noclipDefaults[part]
-                                        end
+                                        part.CanCollide = noclipDefaults[part]
                                     end
                                 end
                             end
-                            
                         end
-                    end
-                else
-                    run(function()
-                        if not Script.Main.Chi or not Script.Boss.KillBoss then
-                            if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity) then
-                                game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(shared.Yurikusa.Main.Velocity):Destroy();
-                                wait()
-                            end
-                            if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand ~= false then
-                                game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand = false
-                                wait()
-                            end
-                        end
-                    end)
-                end
-            end)
-        end)
-    end)
-end)()
-
-LPH_NO_VIRTUALIZE(function()
-	run(function()
-        pcall(function()
-            
-            warn("Unlocked Some Gamepass (Client)")
-            for _,v in pairs(ReplicatedStorage.gamepassIds:GetChildren()) do
-                if v:IsA("IntValue") then
-                    if (v.Name ~= "+2 Pet Slots" and v.Name ~= "+3 Pet Slots" and v.Name ~= "+4 Pet Slots" and v.Name ~= "+60 Capacity" and v.Name ~= "+100 Capacity" and v.Name ~= "+200 Capacity" and v.Name ~= "+20 Capacity" and v.Name ~= "x3 Pet Clones" and v.Name ~= "Infinite Ninjitsu") then -- If it work, remove this line.
-                        v:Clone()
-                        v.Value = nil
-                        v.Parent = lp.ownedGamepasses 
-                        wait()
-                    end
-                end
-            end
-
-        end)
-    end)
-end)()
-
--- remove ads
-LPH_NO_VIRTUALIZE(function()
-	run(function()
-        if lp:WaitForChild("adsAllowed").Value ~= false then
-            lp:WaitForChild("adsAllowed").Value = false
-        end
-    end)
-end)()
-
---[[
-LPH_NO_VIRTUALIZE(function()
-	run(function()
-		RunService.Stepped:Connect(function()
-
-            pcall(function()
-
-                if setscriptable then
-                    setscriptable(game.Players.LocalPlayer, "SimulationRadius", true)
-                end
-
-                if sethidden then
-                    sethidden(game.Players.LocalPlayer, "SimulationRadius", math.huge)
-                end
-
-            end)
-
-		end)
-	end)
-end)()
-]]
-
--- for config~
-LPH_NO_VIRTUALIZE(function()
-    run(function()
-        pcall(function()
-
-            NotificationLoad:NewNotification({
-                ["Mode"] = "info",
-                ["Title"] = "Started Anti AFK",
-                ["Description"] = "Thank for using my script. <3",
-                ["Timeout"] = 6,
-                ["Audio"] = false
-            })
-            
-            local getconnect = getconnections or get_signal_cons
-
-            if getconnect then
-                for i,v in pairs(getconnect(lp.Idled)) do
-                    if v["Disable"] then
-                        v["Disable"](v)
-                    elseif v["Disconnect"] then
-                        v["Disconnect"](v)
                     end
                 end
             else
-                lp.Idled:Connect(function()
-                    VirtualUser:CaptureController()
-                    VirtualUser:Button2Down(Vector2.new(0,0),Camera.CFrame)
-                    wait(1)
-                    VirtualUser:Button2Up(Vector2.new(0,0),Camera.CFrame)
+                run(function()
+                    if not Script.Main.Chi or not Script.Boss.KillBoss then
+                        if game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(env._trash_table.Character.Velocity) then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart:FindFirstChild(env._trash_table.Character.Velocity):Destroy();
+                        end
+                        if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand ~= false then
+                            game:GetService("Players").LocalPlayer.Character:FindFirstChild("Humanoid").PlatformStand = false
+                        end
+                    end
                 end)
             end
-
         end)
     end)
-end)()
+end)
+
+run(function()
+    pcall(function()
+
+        NotificationLoad:NewNotification({
+            ["Mode"] = "info",
+            ["Title"] = "Started Anti AFK",
+            ["Description"] = "Thank for using my script. <3",
+            ["Timeout"] = 6,
+            ["Audio"] = false
+        })
+        
+        local getconnect = getconnections or get_signal_cons
+
+        if getconnect then
+            for i,v in pairs(getconnect(lp.Idled)) do
+                if v["Disable"] then
+                    v["Disable"](v)
+                elseif v["Disconnect"] then
+                    v["Disconnect"](v)
+                end
+            end
+        else
+            lp.Idled:Connect(function()
+                VirtualUser:CaptureController()
+                VirtualUser:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+                wait(1)
+                VirtualUser:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            end)
+        end
+
+    end)
+end)
+
+run(function()
+    pcall(function()
+        
+        for _,v in pairs(rs.gamepassIds:GetChildren()) do
+            if v:IsA("IntValue") then
+                if (v.Name ~= "+2 Pet Slots" and v.Name ~= "+3 Pet Slots" and v.Name ~= "+4 Pet Slots" and v.Name ~= "+60 Capacity" and v.Name ~= "+100 Capacity" and v.Name ~= "+200 Capacity" and v.Name ~= "+20 Capacity" and v.Name ~= "x3 Pet Clones" and v.Name ~= "Infinite Ninjitsu") then -- If it work, remove this line.
+                    v:Clone()
+                    v.Value = nil
+                    v.Parent = lp.ownedGamepasses 
+                    wait()
+                end
+            end
+        end
+
+    end)
+end)
+
+run(function()
+    if lp:WaitForChild("adsAllowed").Value ~= false then
+        lp:WaitForChild("adsAllowed").Value = false
+    end
+end)
 
 print("Load Script Success in "..string.format("%.2f",tick() - LoadingTime).." secs")
 
