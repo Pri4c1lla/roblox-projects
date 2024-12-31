@@ -185,6 +185,7 @@ local Script = {
         ["SelectIslands"] = {},
         ["TypeKarma"] = {},
         ["SelectArea"] = {},
+        ["LoopTeleport"] = false
     },
     Misc = {
         ["RangeRadius"] = {},
@@ -342,79 +343,73 @@ run(function()
     local buyswords = Tabs.Main:AddToggle("", {Title = "auto buy swords", Description = "", Default = false})
     buyswords:OnChanged(function(v)
         Script.Main.sword = v
-        pcall(function()
-            if Script.Main.sword then
-                env.CreateThered:newThread(.1,function(self)
-                    if not Script.Main.sword then
-                        self:Disable()
-                    end
-                    LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllSwords",GetLastIsland())
-                end)
-            end
-        end)
+        if Script.Main.sword then
+            env.CreateThered:newThread(.25,function(self)
+                if not Script.Main.sword then
+                    self:Disable()
+                end
+                LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllSwords",GetLastIsland())
+                task.wait()
+            end)
+        end
     end)
 
     local buybelts = Tabs.Main:AddToggle("", {Title = "auto buy belts", Description = "", Default = false})
     buybelts:OnChanged(function(v)
         Script.Main.belts = v
-        pcall(function()
-            if Script.Main.belts then
-                env.CreateThered:newThread(.1,function(self)
-                    if not Script.Main.belts then
-                        self:Disable()
-                    end
-                    LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllBelts",GetLastIsland())
-                end)
-            end
-        end)
+        if Script.Main.belts then
+            env.CreateThered:newThread(.25,function(self)
+                if not Script.Main.belts then
+                    self:Disable()
+                end
+                LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllBelts",GetLastIsland())
+                task.wait()
+            end)
+        end
     end)
 
     local buyskills = Tabs.Main:AddToggle("", {Title = "auto buy skills", Description = "", Default = false})
     buyskills:OnChanged(function(v)
         Script.Main.skills = v
-        pcall(function()
-            if Script.Main.skills then
-                env.CreateThered:newThread(.1,function(self)
-                    if not Script.Main.skills then
-                        self:Disable()
-                    end
-                    LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllSkills",GetLastIsland())
-                end)
-            end
-        end)
+        if Script.Main.skills then
+            env.CreateThered:newThread(.25,function(self)
+                if not Script.Main.skills then
+                    self:Disable()
+                end
+                LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllSkills",GetLastIsland())
+                task.wait()
+            end)
+        end
     end)
 
     local buyshurikens = Tabs.Main:AddToggle("", {Title = "auto buy shurikens", Description = "", Default = false})
     buyshurikens:OnChanged(function(v)
         Script.Main.shurikens = v
-        pcall(function()
-            if Script.Main.shurikens then
-                env.CreateThered:newThread(.1,function(self)
-                    if not Script.Main.shurikens then
-                        self:Disable()
-                    end
-                    LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllShurikens",GetLastIsland())
-                end)
-            end
-        end)
+        if Script.Main.shurikens then
+            env.CreateThered:newThread(.25,function(self)
+                if not Script.Main.shurikens then
+                    self:Disable()
+                end
+                LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyAllShurikens",GetLastIsland())
+                task.wait()
+            end)
+        end
     end)
 
     local AutoRanks = Tabs.Main:AddToggle("", {Title = "Auto Ranks", Description = "", Default = false})
     AutoRanks:OnChanged(function(v)    
         Script.Main.Ranks = v
-        pcall(function()
-            if Script.Main.Ranks then
-                env.CreateThered:newThread(.25,function(self)
-                    if not Script.Main.Ranks  then
-                        self:Disable()
-                    end
-                    for _, v in next, env._trash_table.Stuff.Ranks do
-                        LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyRank", v)
-                        task.wait()
-                    end
-                end)
-            end
-        end)
+        if Script.Main.Ranks then
+            env.CreateThered:newThread(.25,function(self)
+                if not Script.Main.Ranks  then
+                    self:Disable()
+                end
+                for _, v in next, env._trash_table.Stuff.Ranks do
+                    LocalPlayer:WaitForChild("ninjaEvent"):FireServer("buyRank", v)
+                    task.wait()
+                end
+            end)
+        end
     end)
 
     Tabs.Main:AddButton({
@@ -456,6 +451,7 @@ run(function()
                     local Chests = GetChestName()
                     if Chests ~= nil then
                         FireTouchPart(Chests.circleInner) 
+                        task.wait()
                     end
                 end)
             end
@@ -859,6 +855,52 @@ run(function()
             end
         end
     })
+
+    local LoopTeleports = Tabs.Teleports:AddToggle("", {Title = "Loop Teleport", Description = "",Default = false })
+    LoopTeleports:OnChanged(function(v)
+        Script.Teleports.LoopTeleport = v
+        while Script.Teleports.LoopTeleport do task.wait(.1)
+            if IsAlive() then
+                if Script.Teleports.TypeKarma == "Evil" then
+                    if Script.Teleports.SelectArea == "-+100 Karma" then
+                        if (CFrame.new(-119.522469, 13002.2637, 274.569244).Position - HumanoidRootPart().Position).Magnitude > 100 then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = AreaCFrame[1]
+                        end
+                    elseif Script.Teleports.SelectArea == "-250 Karma" then
+                        if (CFrame.new(330.127533, 16921.8223, -16.1307545).Position - HumanoidRootPart().Position).Magnitude > 100 then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = AreaCFrame[3]
+                        end
+                    elseif Script.Teleports.SelectArea == "-+2000 Karma" then
+                        if (CFrame.new(627.358643, 82.2061615, 2429.48657).Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude > 100 then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = AreaCFrame[5]
+                        end
+                    elseif Script.Teleports.SelectArea == "-+5000 Karma" then
+                        if (CFrame.new(1875.96692, 82.2061615, -6806.41016).Position - HumanoidRootPart().Position).Magnitude > 100 then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = AreaCFrame[7]
+                        end
+                    end
+                elseif Script.Teleports.TypeKarma == "Light" then
+                    if Script.Teleports.SelectArea == "-+100 Karma" then
+                        if (CFrame.new(354.477539, 8874.26367, 116.569244).Position - HumanoidRootPart().Position).Magnitude > 100 then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = AreaCFrame[2]
+                        end
+                    elseif Script.Teleports.SelectArea == "+1000 Karma" then
+                        if (CFrame.new(1848.47754, 82.2061615, -137.430756).Position - HumanoidRootPart().Position).Magnitude > 100 then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = AreaCFrame[4]
+                        end
+                    elseif Script.Teleports.SelectArea == "-+2000 Karma" then
+                        if (CFrame.new(330.127533, 30432.8242, -16.1307545).Position - HumanoidRootPart().Position).Magnitude > 100 then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = AreaCFrame[6]
+                        end
+                    elseif Script.Teleports.SelectArea == "-+5000 Karma" then
+                        if (CFrame.new(5041.17725, 82.2061615, 1614.74866).Position - HumanoidRootPart().Position).Magnitude > 100 then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = AreaCFrame[8]
+                        end
+                    end
+                end
+            end
+        end
+    end)
 
     Tabs.Teleports:AddButton({
         Title = "Teleport Dojo",
